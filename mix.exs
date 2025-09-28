@@ -10,7 +10,7 @@ defmodule ExUtcp.MixProject do
       deps: deps(),
       description: description(),
       package: package(),
-      source_url: "https://github.com/universal-tool-calling-protocol/ex-utcp",
+      source_url: "https://github.com/thanos/ex_utcp",
       docs: [
         main: "ExUtcp",
         extras: ["README.md"]
@@ -58,10 +58,10 @@ defmodule ExUtcp.MixProject do
 
   defp package do
     [
-      maintainers: ["Universal Tool Calling Protocol Team"],
+      maintainers: ["Thanps Vassilakis"],
       licenses: ["MPL-2.0"],
       links: %{
-        "GitHub" => "https://github.com/universal-tool-calling-protocol/ex-utcp",
+        "GitHub" => "https://github.com/thanos/ex_utcp",
         "Documentation" => "https://hexdocs.pm/ex_utcp"
       }
     ]
