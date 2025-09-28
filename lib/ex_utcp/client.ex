@@ -186,7 +186,8 @@ defmodule ExUtcp.Client do
   defp default_transports do
     %{
       "http" => ExUtcp.Transports.Http,
-      "cli" => ExUtcp.Transports.Cli
+      "cli" => ExUtcp.Transports.Cli,
+      "websocket" => ExUtcp.Transports.WebSocket
       # Add more transports as they are implemented
     }
   end
@@ -238,6 +239,7 @@ defmodule ExUtcp.Client do
     case provider_type do
       "http" -> parse_http_provider(provider_data)
       "cli" -> parse_cli_provider(provider_data)
+      "websocket" -> parse_websocket_provider(provider_data)
       _ -> {:error, "Unknown provider type: #{provider_type}"}
     end
   end
@@ -262,6 +264,19 @@ defmodule ExUtcp.Client do
       command_name: Map.get(data, "command_name", ""),
       working_dir: Map.get(data, "working_dir"),
       env_vars: Map.get(data, "env_vars", %{})
+    ])
+    {:ok, provider}
+  end
+
+  defp parse_websocket_provider(data) do
+    provider = Providers.new_websocket_provider([
+      name: Map.get(data, "name", ""),
+      url: Map.get(data, "url", ""),
+      protocol: Map.get(data, "protocol"),
+      keep_alive: Map.get(data, "keep_alive", false),
+      auth: parse_auth(Map.get(data, "auth")),
+      headers: Map.get(data, "headers", %{}),
+      header_fields: Map.get(data, "header_fields", [])
     ])
     {:ok, provider}
   end

@@ -110,6 +110,19 @@ defmodule ExUtcpTest do
       assert provider.command_name == "echo hello"
     end
 
+    test "creates WebSocket provider" do
+      provider = Providers.new_websocket_provider([
+        name: "test",
+        url: "ws://example.com/ws"
+      ])
+
+      assert provider.name == "test"
+      assert provider.type == :websocket
+      assert provider.url == "ws://example.com/ws"
+      assert provider.protocol == nil
+      assert provider.keep_alive == false
+    end
+
     test "validates provider" do
       provider = %{name: "", type: :http}
 

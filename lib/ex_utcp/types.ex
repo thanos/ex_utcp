@@ -84,8 +84,11 @@ defmodule ExUtcp.Types do
     name: String.t(),
     type: :websocket,
     url: String.t(),
+    protocol: String.t() | nil,
+    keep_alive: boolean(),
     auth: auth() | nil,
-    headers: %{String.t() => String.t()}
+    headers: %{String.t() => String.t()},
+    header_fields: [String.t()]
   }
 
   @type grpc_provider :: %{

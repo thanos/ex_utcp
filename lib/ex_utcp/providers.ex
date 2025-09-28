@@ -49,8 +49,11 @@ defmodule ExUtcp.Providers do
       name: Keyword.fetch!(opts, :name),
       type: :websocket,
       url: Keyword.fetch!(opts, :url),
+      protocol: Keyword.get(opts, :protocol, nil),
+      keep_alive: Keyword.get(opts, :keep_alive, false),
       auth: Keyword.get(opts, :auth, nil),
-      headers: Keyword.get(opts, :headers, %{})
+      headers: Keyword.get(opts, :headers, %{}),
+      header_fields: Keyword.get(opts, :header_fields, [])
     }
   end
 
