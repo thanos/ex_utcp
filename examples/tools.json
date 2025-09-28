@@ -1,0 +1,47 @@
+{
+  "version": "1.0",
+  "tools": [
+    {
+      "name": "echo",
+      "description": "Echoes back the provided message",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The message to echo back"
+          }
+        },
+        "required": ["message"]
+      },
+      "outputs": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "description": "The echoed message"
+          }
+        }
+      },
+      "tags": ["utility", "echo"]
+    },
+    {
+      "name": "timestamp",
+      "description": "Returns the current timestamp",
+      "inputs": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputs": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "description": "Current timestamp in RFC3339 format"
+          }
+        }
+      },
+      "tags": ["utility", "time"]
+    }
+  ]
+}
