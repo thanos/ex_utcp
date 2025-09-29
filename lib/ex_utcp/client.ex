@@ -187,7 +187,8 @@ defmodule ExUtcp.Client do
     %{
       "http" => ExUtcp.Transports.Http,
       "cli" => ExUtcp.Transports.Cli,
-      "websocket" => ExUtcp.Transports.WebSocket
+      "websocket" => ExUtcp.Transports.WebSocket,
+      "grpc" => ExUtcp.Transports.Grpc
       # Add more transports as they are implemented
     }
   end
@@ -240,6 +241,7 @@ defmodule ExUtcp.Client do
       "http" -> parse_http_provider(provider_data)
       "cli" -> parse_cli_provider(provider_data)
       "websocket" -> parse_websocket_provider(provider_data)
+      "grpc" -> parse_grpc_provider(provider_data)
       _ -> {:error, "Unknown provider type: #{provider_type}"}
     end
   end
@@ -277,6 +279,20 @@ defmodule ExUtcp.Client do
       auth: parse_auth(Map.get(data, "auth")),
       headers: Map.get(data, "headers", %{}),
       header_fields: Map.get(data, "header_fields", [])
+    ])
+    {:ok, provider}
+  end
+
+  defp parse_grpc_provider(data) do
+    provider = Providers.new_grpc_provider([
+      name: Map.get(data, "name", ""),
+      host: Map.get(data, "host", "127.0.0.1"),
+      port: Map.get(data, "port", 9339),
+      service_name: Map.get(data, "service_name", "UTCPService"),
+      method_name: Map.get(data, "method_name", "CallTool"),
+      target: Map.get(data, "target"),
+      use_ssl: Map.get(data, "use_ssl", false),
+      auth: parse_auth(Map.get(data, "auth"))
     ])
     {:ok, provider}
   end

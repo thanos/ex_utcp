@@ -67,8 +67,11 @@ defmodule ExUtcp.Providers do
       type: :grpc,
       host: Keyword.get(opts, :host, "127.0.0.1"),
       port: Keyword.get(opts, :port, 9339),
-      auth: Keyword.get(opts, :auth, nil),
-      headers: Keyword.get(opts, :headers, %{})
+      service_name: Keyword.get(opts, :service_name, "UTCPService"),
+      method_name: Keyword.get(opts, :method_name, "CallTool"),
+      target: Keyword.get(opts, :target, nil),
+      use_ssl: Keyword.get(opts, :use_ssl, false),
+      auth: Keyword.get(opts, :auth, nil)
     }
   end
 

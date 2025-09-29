@@ -123,6 +123,22 @@ defmodule ExUtcpTest do
       assert provider.keep_alive == false
     end
 
+    test "creates gRPC provider" do
+      provider = Providers.new_grpc_provider([
+        name: "test",
+        host: "localhost",
+        port: 9339
+      ])
+
+      assert provider.name == "test"
+      assert provider.type == :grpc
+      assert provider.host == "localhost"
+      assert provider.port == 9339
+      assert provider.service_name == "UTCPService"
+      assert provider.method_name == "CallTool"
+      assert provider.use_ssl == false
+    end
+
     test "validates provider" do
       provider = %{name: "", type: :http}
 

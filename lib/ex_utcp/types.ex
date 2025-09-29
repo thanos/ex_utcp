@@ -96,8 +96,11 @@ defmodule ExUtcp.Types do
     type: :grpc,
     host: String.t(),
     port: integer(),
-    auth: auth() | nil,
-    headers: %{String.t() => String.t()}
+    service_name: String.t(),
+    method_name: String.t(),
+    target: String.t() | nil,
+    use_ssl: boolean(),
+    auth: auth() | nil
   }
 
   @type graphql_provider :: %{
