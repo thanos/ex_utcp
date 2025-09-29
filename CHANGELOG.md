@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2024-01-XX
+
 ### Added
 - WebSocket transport implementation for real-time bidirectional communication
 - WebSocket provider support with full configuration options
@@ -14,11 +16,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive WebSocket test suite
 - WebSocket client and server examples
 - Enhanced provider type system with WebSocket-specific fields
+- gRPC transport implementation for high-performance RPC calls
+- gRPC provider support with Protocol Buffer integration
+- gRPC streaming functionality for real-time data streaming
+- Comprehensive gRPC test suite
+- gRPC client example
+- Protocol Buffer definition file (proto/utcp.proto)
+- Enhanced provider type system with gRPC-specific fields
 
 ### Changed
-- Updated client to support WebSocket providers
-- Enhanced provider parsing to handle WebSocket configuration
-- Extended type definitions for WebSocket providers
+- Updated client to support WebSocket and gRPC providers
+- Enhanced provider parsing to handle WebSocket and gRPC configuration
+- Extended type definitions for WebSocket and gRPC providers
+- Updated gap analysis to reflect 33% transport coverage (4/12 types)
 
 ## [0.1.0] - 2024-01-XX
 

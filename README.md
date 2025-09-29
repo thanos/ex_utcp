@@ -3,6 +3,7 @@
 [![Hex.pm](https://img.shields.io/hexpm/v/ex_utcp.svg)](https://hex.pm/packages/ex_utcp)
 [![Hex.pm](https://img.shields.io/hexpm/dt/ex_utcp.svg)](https://hex.pm/packages/ex_utcp)
 [![Hex.pm](https://img.shields.io/hexpm/l/ex_utcp.svg)](https://hex.pm/packages/ex_utcp)
+[![HexDocs.pm](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/ex_utcp)
 
 Elixir implementation of the Universal Tool Calling Protocol (UTCP).
 
@@ -31,7 +32,7 @@ Add `ex_utcp` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ex_utcp, "~> 0.1.0"}
+    {:ex_utcp, "~> 0.2.0"}
   ]
 end
 ```
@@ -118,7 +119,7 @@ Create a `providers.json` file to define your providers:
       "url": "https://api.example.com/tools",
       "content_type": "application/json",
       "headers": {
-        "User-Agent": "ExUtcp/0.1.0"
+        "User-Agent": "ExUtcp/0.2.0"
       },
       "auth": {
         "type": "api_key",
@@ -158,12 +159,12 @@ config = Config.new(
 
 The library is organized into several main components:
 
-* `ExUtcp.Client` - Main client interface
-* `ExUtcp.Config` - Configuration management
-* `ExUtcp.Providers` - Provider implementations for different protocols
-* `ExUtcp.Transports` - Transport layer implementations
-* `ExUtcp.Tools` - Tool definitions and management
-* `ExUtcp.Repository` - Tool and provider storage
+* ExUtcp.Client - Main client interface
+* ExUtcp.Config - Configuration management
+* ExUtcp.Providers - Provider implementations for different protocols
+* ExUtcp.Transports - Transport layer implementations
+* ExUtcp.Tools - Tool definitions and management
+* ExUtcp.Repository - Tool and provider storage
 
 ## Implementation Status
 
@@ -171,78 +172,80 @@ The library is organized into several main components:
 
 | Feature Category | Go Implementation | Elixir Implementation | Coverage |
 |------------------|-------------------|----------------------|----------|
-| **Core Client** | Complete | Complete | 100% |
-| **Configuration** | Complete | Basic | 70% |
-| **Transports** | 12 types | 3 types | 25% |
-| **Providers** | 12 types | 3 types | 25% |
-| **Authentication** | 3 types | 3 types | 100% |
-| **Tool Management** | Complete | Complete | 100% |
-| **Streaming** | Complete | Basic | 60% |
-| **Search** | Advanced | Basic | 60% |
-| **Performance** | Optimized | Basic | 30% |
-| **Error Handling** | Robust | Basic | 70% |
+| Core Client | Complete | Complete | 100% |
+| Configuration | Complete | Basic | 70% |
+| Transports | 12 types | 4 types | 33% |
+| Providers | 12 types | 4 types | 33% |
+| Authentication | 3 types | 3 types | 100% |
+| Tool Management | Complete | Complete | 100% |
+| Streaming | Complete | Basic | 60% |
+| Search | Advanced | Basic | 60% |
+| Performance | Optimized | Basic | 30% |
+| Error Handling | Robust | Basic | 70% |
 
 ### Priority Recommendations
 
-#### **High Priority (Core Functionality)**
-- [ ] **Implement Missing Transports**: WebSocket, gRPC, GraphQL, MCP
-- [ ] **Add Streaming Support**: Complete `CallToolStream` implementation
-- [ ] **OpenAPI Converter**: Automatic API discovery
-- [ ] **Advanced Search**: Implement proper search strategies
+#### High Priority (Core Functionality)
+- [x] Implement Missing Transports: WebSocket, gRPC, GraphQL, MCP
+- [ ] Add Streaming Support: Complete `CallToolStream` implementation
+- [ ] OpenAPI Converter: Automatic API discovery
+- [ ] Advanced Search: Implement proper search strategies
 
-#### **Medium Priority (Enhanced Features)**
-- [ ] **Performance Optimizations**: Caching, connection pooling
-- [ ] **Error Resilience**: Retry logic, circuit breakers
-- [ ] **Monitoring**: Metrics and health checks
-- [ ] **Batch Operations**: Multiple tool calls
+#### Medium Priority (Enhanced Features)
+- [ ] Performance Optimizations: Caching, connection pooling
+- [ ] Error Resilience: Retry logic, circuit breakers
+- [ ] Monitoring: Metrics and health checks
+- [ ] Batch Operations: Multiple tool calls
 
-#### **Low Priority (Nice to Have)**
-- [ ] **WebRTC Support**: Peer-to-peer communication
-- [ ] **Custom Variable Loaders**: Beyond .env files
-- [ ] **Advanced Configuration**: Per-transport settings
-- [ ] **Documentation**: API documentation generation
+#### Low Priority (Nice to Have)
+- [ ] WebRTC Support: Peer-to-peer communication
+- [ ] Custom Variable Loaders: Beyond .env files
+- [ ] Advanced Configuration: Per-transport settings
+- [ ] Documentation: API documentation generation
 
 ### Current Implementation Status
 
-#### **Completed Features**
-- **HTTP Transport**: Full REST API integration with OpenAPI support
-- **CLI Transport**: Command-line tool integration with argument formatting
-- **WebSocket Transport**: Real-time communication (mock implementation)
-- **Core Client**: GenServer-based client with full API compatibility
-- **Configuration Management**: Variable substitution, environment loading
-- **Tool Management**: Discovery, registration, search, and execution
-- **Authentication**: API key, Basic, and OAuth2 support
-- **Repository Pattern**: In-memory storage for providers and tools
+#### Completed Features
+- HTTP Transport: Full REST API integration with OpenAPI support
+- CLI Transport: Command-line tool integration with argument formatting
+- WebSocket Transport: Real-time communication (mock implementation)
+- gRPC Transport: High-performance RPC calls (mock implementation)
+- Core Client: GenServer-based client with full API compatibility
+- Configuration Management: Variable substitution, environment loading
+- Tool Management: Discovery, registration, search, and execution
+- Authentication: API key, Basic, and OAuth2 support
+- Repository Pattern: In-memory storage for providers and tools
 
-#### **In Progress**
-- **WebSocket Integration**: Real WebSocket connection implementation
-- **Streaming Support**: Enhanced streaming capabilities
+#### In Progress
+- WebSocket Integration: Real WebSocket connection implementation
+- Streaming Support: Enhanced streaming capabilities
 
-#### **Planned**
-- **gRPC Transport**: High-performance RPC calls
-- **GraphQL Transport**: GraphQL API integration
-- **MCP Transport**: Model Context Protocol integration
-- **Performance Optimizations**: Connection pooling, caching
-- **Advanced Search**: Sophisticated search algorithms
+#### Planned
+- gRPC Transport: High-performance RPC calls
+- GraphQL Transport: GraphQL API integration
+- MCP Transport: Model Context Protocol integration
+- Performance Optimizations: Connection pooling, caching
+- Advanced Search: Sophisticated search algorithms
 
 ## Supported Transports
 
-### **Implemented**
-- **HTTP/HTTPS**: REST API integration with OpenAPI support
-- **CLI**: Command-line tool integration
-- **WebSocket**: Real-time communication (mock implementation)
+### Implemented
+- HTTP/HTTPS: REST API integration with OpenAPI support
+- CLI: Command-line tool integration
+- WebSocket: Real-time communication (mock implementation)
+- gRPC: High-performance RPC calls (mock implementation)
 
-### **In Progress**
-- **WebSocket**: Real WebSocket connection implementation
+### In Progress
+- WebSocket: Real WebSocket connection implementation
+- gRPC: Real gRPC connection implementation
 
-### **Planned**
-- **gRPC**: High-performance RPC calls
-- **GraphQL**: GraphQL API integration
-- **TCP/UDP**: Low-level network protocols
-- **WebRTC**: Peer-to-peer communication
-- **MCP**: Model Context Protocol integration
-- **Server-Sent Events**: Real-time streaming
-- **Streamable HTTP**: HTTP streaming support
+### Planned
+- GraphQL: GraphQL API integration
+- TCP/UDP: Low-level network protocols
+- WebRTC: Peer-to-peer communication
+- MCP: Model Context Protocol integration
+- Server-Sent Events: Real-time streaming
+- Streamable HTTP: HTTP streaming support
 
 ## Examples
 
@@ -252,6 +255,7 @@ Check the `examples/` directory for complete working examples:
 - `cli_client.exs` - CLI provider example
 - `websocket_client.exs` - WebSocket provider example
 - `websocket_server.exs` - WebSocket server for testing
+- `grpc_client.exs` - gRPC provider example
 - `simple_example.exs` - Basic usage demonstration
 
 ## Testing
