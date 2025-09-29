@@ -165,17 +165,84 @@ The library is organized into several main components:
 * `ExUtcp.Tools` - Tool definitions and management
 * `ExUtcp.Repository` - Tool and provider storage
 
+## Implementation Status
+
+### Gap Analysis: Elixir UTCP vs Go UTCP
+
+| Feature Category | Go Implementation | Elixir Implementation | Coverage |
+|------------------|-------------------|----------------------|----------|
+| **Core Client** | ✅ Complete | ✅ Complete | 100% |
+| **Configuration** | ✅ Complete | ✅ Basic | 70% |
+| **Transports** | ✅ 12 types | ✅ 3 types | 25% |
+| **Providers** | ✅ 12 types | ✅ 3 types | 25% |
+| **Authentication** | ✅ 3 types | ✅ 3 types | 100% |
+| **Tool Management** | ✅ Complete | ✅ Complete | 100% |
+| **Streaming** | ✅ Complete | ✅ Basic | 60% |
+| **Search** | ✅ Advanced | ✅ Basic | 60% |
+| **Performance** | ✅ Optimized | ✅ Basic | 30% |
+| **Error Handling** | ✅ Robust | ✅ Basic | 70% |
+
+### Priority Recommendations
+
+#### **High Priority (Core Functionality)**
+- [ ] **Implement Missing Transports**: WebSocket, gRPC, GraphQL, MCP
+- [ ] **Add Streaming Support**: Complete `CallToolStream` implementation
+- [ ] **OpenAPI Converter**: Automatic API discovery
+- [ ] **Advanced Search**: Implement proper search strategies
+
+#### **Medium Priority (Enhanced Features)**
+- [ ] **Performance Optimizations**: Caching, connection pooling
+- [ ] **Error Resilience**: Retry logic, circuit breakers
+- [ ] **Monitoring**: Metrics and health checks
+- [ ] **Batch Operations**: Multiple tool calls
+
+#### **Low Priority (Nice to Have)**
+- [ ] **WebRTC Support**: Peer-to-peer communication
+- [ ] **Custom Variable Loaders**: Beyond .env files
+- [ ] **Advanced Configuration**: Per-transport settings
+- [ ] **Documentation**: API documentation generation
+
+### Current Implementation Status
+
+#### **✅ Completed Features**
+- **HTTP Transport**: Full REST API integration with OpenAPI support
+- **CLI Transport**: Command-line tool integration with argument formatting
+- **WebSocket Transport**: Real-time communication (mock implementation)
+- **Core Client**: GenServer-based client with full API compatibility
+- **Configuration Management**: Variable substitution, environment loading
+- **Tool Management**: Discovery, registration, search, and execution
+- **Authentication**: API key, Basic, and OAuth2 support
+- **Repository Pattern**: In-memory storage for providers and tools
+
+#### **🔄 In Progress**
+- **WebSocket Integration**: Real WebSocket connection implementation
+- **Streaming Support**: Enhanced streaming capabilities
+
+#### **📋 Planned**
+- **gRPC Transport**: High-performance RPC calls
+- **GraphQL Transport**: GraphQL API integration
+- **MCP Transport**: Model Context Protocol integration
+- **Performance Optimizations**: Connection pooling, caching
+- **Advanced Search**: Sophisticated search algorithms
+
 ## Supported Transports
 
+### ✅ **Implemented**
 - **HTTP/HTTPS**: REST API integration with OpenAPI support
 - **CLI**: Command-line tool integration
-- **WebSocket**: Real-time communication
+- **WebSocket**: Real-time communication (mock implementation)
+
+### 🔄 **In Progress**
+- **WebSocket**: Real WebSocket connection implementation
+
+### 📋 **Planned**
 - **gRPC**: High-performance RPC calls
 - **GraphQL**: GraphQL API integration
 - **TCP/UDP**: Low-level network protocols
 - **WebRTC**: Peer-to-peer communication
 - **MCP**: Model Context Protocol integration
 - **Server-Sent Events**: Real-time streaming
+- **Streamable HTTP**: HTTP streaming support
 
 ## Examples
 
@@ -183,6 +250,9 @@ Check the `examples/` directory for complete working examples:
 
 - `http_client.exs` - HTTP provider example
 - `cli_client.exs` - CLI provider example
+- `websocket_client.exs` - WebSocket provider example
+- `websocket_server.exs` - WebSocket server for testing
+- `simple_example.exs` - Basic usage demonstration
 
 ## Testing
 
