@@ -4,7 +4,27 @@ All notable changes to this project will be documented in this file.
 
 
 
-## [0.2.2] - 2024-01-XX
+## [0.2.3] - 2025-09-29
+
+### Added
+- Production-ready GraphQL transport implementation with HTTP/HTTPS support
+- GraphQL connection management with pooling and lifecycle management
+- GraphQL authentication support for API Key, Basic, and OAuth2
+- GraphQL error recovery with retry logic and exponential backoff
+- GraphQL schema introspection for automatic tool discovery
+- GraphQL query, mutation, and subscription support
+- GraphQL streaming capabilities for real-time data
+- Comprehensive GraphQL testing suite with 18 tests
+- GraphQL usage examples demonstrating all features
+
+### Changed
+- Enhanced GraphQL transport with production-ready features
+- Updated GraphQL implementation to use real HTTP connections
+- Improved error handling and retry mechanisms for GraphQL operations
+- Enhanced connection pooling and lifecycle management
+
+## [0.2.2] - 2025-09-28
+>>>>>>> fc29827 (updated readme)
 
 ### Added
 - Production-ready gRPC transport implementation with Protocol Buffer integration
@@ -23,7 +43,8 @@ All notable changes to this project will be documented in this file.
 - Improved error handling and retry mechanisms for gRPC operations
 - Enhanced connection pooling and lifecycle management
 
-## [0.2.1] - 2024-01-XX
+
+## [0.2.1]  - 2025-09-28
 
 ### Added
 - Production-ready WebSocket transport implementation with real WebSockex integration
@@ -40,7 +61,9 @@ All notable changes to this project will be documented in this file.
 - Updated WebSocket implementation to use real WebSocket connections
 - Enhanced error handling and retry mechanisms for WebSocket operations
 
-## [0.2.0] - 2024-01-XX
+
+## [0.2.0] - 2025-09-28
+
 
 ### Added
 - WebSocket transport implementation for real-time bidirectional communication
