@@ -58,7 +58,7 @@ defmodule ExUtcp.Transports.WebSocketTest do
     test "deregister_tool_provider always succeeds" do
       # Start the WebSocket transport GenServer
       {:ok, _pid} = WebSocket.start_link()
-      
+
       _transport = WebSocket.new()
       provider = Providers.new_websocket_provider(name: "test", url: "ws://example.com")
 
@@ -139,13 +139,13 @@ defmodule ExUtcp.Transports.WebSocketTest do
     test "handles connection errors gracefully" do
       # Start the WebSocket transport GenServer
       {:ok, _pid} = WebSocket.start_link()
-      
+
       # This would require mocking WebSockex in a real test
       provider = Providers.new_websocket_provider([
         name: "test",
         url: "ws://invalid-url-that-does-not-exist:9999/ws"
       ])
-      
+
       # In a real test environment, we would mock the WebSocket connection
       # and test error handling scenarios. The real implementation now tries
       # to connect and fails gracefully with an error
@@ -155,7 +155,7 @@ defmodule ExUtcp.Transports.WebSocketTest do
     test "handles retry logic with exponential backoff" do
       # Test retry configuration
       transport = WebSocket.new(max_retries: 3, retry_delay: 1000)
-      
+
       assert transport.max_retries == 3
       assert transport.retry_delay == 1000
     end
@@ -163,7 +163,7 @@ defmodule ExUtcp.Transports.WebSocketTest do
     test "handles connection pooling" do
       # Test connection pooling functionality
       transport = WebSocket.new()
-      
+
       assert transport.connection_pool == %{}
     end
   end
@@ -173,7 +173,7 @@ defmodule ExUtcp.Transports.WebSocketTest do
       # Test GenServer functionality
       assert {:ok, pid} = WebSocket.start_link()
       assert is_pid(pid)
-      
+
       # Clean up
       GenServer.stop(pid)
     end
@@ -181,13 +181,13 @@ defmodule ExUtcp.Transports.WebSocketTest do
     test "handles connection lifecycle" do
       # Test connection creation, usage, and cleanup
       transport = WebSocket.new()
-      
+
       # Test connection key generation
       _provider = Providers.new_websocket_provider([
         name: "test",
         url: "ws://localhost:8080/ws"
       ])
-      
+
       # This would test actual connection management in a real implementation
       assert is_struct(transport)
     end

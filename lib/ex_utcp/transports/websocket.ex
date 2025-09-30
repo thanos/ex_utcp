@@ -147,7 +147,7 @@ defmodule ExUtcp.Transports.WebSocket do
 
   defp discover_tools(provider) do
     retry_config = %{max_retries: 3, retry_delay: 1000, backoff_multiplier: 2}
-    
+
     with_retry(fn ->
       with {:ok, conn} <- get_or_create_connection(provider),
            {:ok, tools} <- request_manual(conn, provider) do
@@ -160,7 +160,7 @@ defmodule ExUtcp.Transports.WebSocket do
 
   defp execute_tool_call(tool_name, args, provider) do
     retry_config = %{max_retries: 3, retry_delay: 1000, backoff_multiplier: 2}
-    
+
     with_retry(fn ->
       with {:ok, conn} <- get_or_create_connection(provider),
            {:ok, result} <- send_tool_request(conn, tool_name, args, provider) do
@@ -173,7 +173,7 @@ defmodule ExUtcp.Transports.WebSocket do
 
   defp execute_tool_stream(tool_name, args, provider) do
     retry_config = %{max_retries: 3, retry_delay: 1000, backoff_multiplier: 2}
-    
+
     with_retry(fn ->
       with {:ok, conn} <- get_or_create_connection(provider),
            {:ok, stream_result} <- send_tool_stream_request(conn, tool_name, args, provider) do
@@ -193,7 +193,7 @@ defmodule ExUtcp.Transports.WebSocket do
 
   defp get_or_create_connection(provider, state) do
     connection_key = build_connection_key(provider)
-    
+
     case Map.get(state.connection_pool, connection_key) do
       nil ->
         # Create new connection
@@ -293,7 +293,7 @@ defmodule ExUtcp.Transports.WebSocket do
   defp collect_stream_messages(conn, acc) do
     # Get all available messages from the connection
     messages = Connection.get_all_messages(conn)
-    
+
     case messages do
       [] ->
         # No messages available, wait a bit and try again
@@ -307,9 +307,9 @@ defmodule ExUtcp.Transports.WebSocket do
             {:error, _} -> msg
           end
         end)
-        
+
         new_acc = Enum.reverse(decoded_messages) ++ acc
-        
+
         # Check if we should continue collecting or return
         if length(msgs) < 10 do
           # Few messages, might be done
@@ -376,7 +376,7 @@ defmodule ExUtcp.Transports.WebSocket do
 
   defp close_connection_for_provider(provider, state) do
     connection_key = build_connection_key(provider)
-    
+
     case Map.get(state.connection_pool, connection_key) do
       nil -> state
       conn ->
@@ -398,7 +398,7 @@ defmodule ExUtcp.Transports.WebSocket do
     new_pool = Enum.reject(state.connection_pool, fn {_key, pool_conn} ->
       pool_conn == conn
     end) |> Enum.into(%{})
-    
+
     %{state | connection_pool: new_pool}
   end
 
