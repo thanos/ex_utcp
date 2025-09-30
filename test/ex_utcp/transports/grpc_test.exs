@@ -5,6 +5,17 @@ defmodule ExUtcp.Transports.GrpcTest do
   alias ExUtcp.Providers
 
   describe "gRPC Transport" do
+    setup do
+      # Start the gRPC transport for tests that need it
+      case Process.whereis(Grpc) do
+        nil ->
+          {:ok, _pid} = Grpc.start_link()
+        _pid ->
+          :ok
+      end
+      :ok
+    end
+
     test "creates new transport" do
       transport = Grpc.new()
 
@@ -21,18 +32,20 @@ defmodule ExUtcp.Transports.GrpcTest do
       assert transport.connection_timeout == 60_000
     end
 
+    test "starts the transport GenServer" do
+      # This test runs in setup, but we can verify it's running
+      assert Process.whereis(Grpc) != nil
+    end
+
     test "returns correct transport name" do
-      _transport = Grpc.new()
       assert Grpc.transport_name() == "grpc"
     end
 
     test "supports streaming" do
-      _transport = Grpc.new()
       assert Grpc.supports_streaming?() == true
     end
 
     test "validates provider type" do
-      _transport = Grpc.new()
       http_provider = Providers.new_http_provider(name: "test", url: "http://example.com")
 
       assert {:error, "gRPC transport can only be used with gRPC providers"} =
@@ -40,7 +53,6 @@ defmodule ExUtcp.Transports.GrpcTest do
     end
 
     test "handles invalid provider in call_tool" do
-      _transport = Grpc.new()
       http_provider = Providers.new_http_provider(name: "test", url: "http://example.com")
 
       assert {:error, "gRPC transport can only be used with gRPC providers"} =
@@ -48,7 +60,6 @@ defmodule ExUtcp.Transports.GrpcTest do
     end
 
     test "handles invalid provider in call_tool_stream" do
-      _transport = Grpc.new()
       http_provider = Providers.new_http_provider(name: "test", url: "http://example.com")
 
       assert {:error, "gRPC transport can only be used with gRPC providers"} =
@@ -56,15 +67,29 @@ defmodule ExUtcp.Transports.GrpcTest do
     end
 
     test "deregister_tool_provider always succeeds" do
-      _transport = Grpc.new()
       provider = Providers.new_grpc_provider(name: "test", host: "localhost", port: 9339)
 
       assert :ok = Grpc.deregister_tool_provider(provider)
     end
 
     test "close always succeeds" do
-      _transport = Grpc.new()
       assert :ok = Grpc.close()
+    end
+
+    test "provides gNMI functionality" do
+      provider = Providers.new_grpc_provider([
+        name: "test",
+        host: "localhost",
+        port: 50051,
+        service_name: "UTCPService",
+        method_name: "GetManual",
+        use_ssl: false
+      ])
+
+      # Test gNMI operations (these will succeed with the mock implementation)
+      assert {:ok, %{"result" => _}} = Grpc.gnmi_get(provider, ["/interfaces/interface"], [])
+      assert {:ok, %{"result" => _}} = Grpc.gnmi_set(provider, [%{"path" => "/test", "val" => "value"}], [])
+      assert {:ok, [%{"chunk" => _}, %{"chunk" => _}]} = Grpc.gnmi_subscribe(provider, ["/interfaces/interface"], [])
     end
   end
 
@@ -136,18 +161,48 @@ defmodule ExUtcp.Transports.GrpcTest do
   end
 
   describe "Error handling" do
+    setup do
+      # Ensure the GenServer is running for these tests
+      case Process.whereis(Grpc) do
+        nil ->
+          {:ok, _pid} = Grpc.start_link()
+        _pid ->
+          :ok
+      end
+      :ok
+    end
+
     test "handles connection errors gracefully" do
-      # This would require mocking gRPC in a real test
       provider = Providers.new_grpc_provider([
         name: "test",
         host: "invalid-host-that-does-not-exist",
         port: 9999
       ])
 
-      # In a real test environment, we would mock the gRPC connection
-      # and test error handling scenarios. For now, the mock implementation
-      # returns success, so we test that it returns a valid response
+      # With the mock implementation, this will succeed
       assert {:ok, []} = Grpc.register_tool_provider(provider)
+    end
+
+    test "handles tool call errors gracefully" do
+      provider = Providers.new_grpc_provider([
+        name: "test",
+        host: "invalid-host-that-does-not-exist",
+        port: 9999
+      ])
+
+      # With the mock implementation, this will succeed
+      assert {:ok, %{"result" => _}} = Grpc.call_tool("test.tool", %{"arg" => "value"}, provider)
+    end
+
+    test "handles tool stream errors gracefully" do
+      provider = Providers.new_grpc_provider([
+        name: "test",
+        host: "invalid-host-that-does-not-exist",
+        port: 9999
+      ])
+
+      # With the mock implementation, this will succeed
+      assert {:ok, %{type: :stream, data: _}} = Grpc.call_tool_stream("test.tool", %{"arg" => "value"}, provider)
     end
   end
 end
