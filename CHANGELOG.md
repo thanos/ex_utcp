@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 
 
-## [0.2.2] - 2025-09-29
+## [0.2.2] - 2024-01-XX
 
 ### Added
 - Production-ready gRPC transport implementation with Protocol Buffer integration
@@ -23,7 +23,7 @@ All notable changes to this project will be documented in this file.
 - Improved error handling and retry mechanisms for gRPC operations
 - Enhanced connection pooling and lifecycle management
 
-## [0.2.1]  - 2025-09-28
+## [0.2.1] - 2024-01-XX
 
 ### Added
 - Production-ready WebSocket transport implementation with real WebSockex integration
@@ -40,7 +40,7 @@ All notable changes to this project will be documented in this file.
 - Updated WebSocket implementation to use real WebSocket connections
 - Enhanced error handling and retry mechanisms for WebSocket operations
 
-## [0.2.0] - 2025-09-27
+## [0.2.0] - 2024-01-XX
 
 ### Added
 - WebSocket transport implementation for real-time bidirectional communication
@@ -63,7 +63,7 @@ All notable changes to this project will be documented in this file.
 - Extended type definitions for WebSocket and gRPC providers
 - Updated gap analysis to reflect 33% transport coverage (4/12 types)
 
-## [0.1.0] - 2024-01-XX
+## [0.1.0] - 2025-09-27
 
 ### Added
 - Initial release of ExUtcp library
