@@ -4,6 +4,20 @@ defmodule ExUtcp.Transports.GrpcTest do
   alias ExUtcp.Transports.Grpc
   alias ExUtcp.Providers
 
+  setup_all do
+    # Clean up any existing gRPC transport
+    case Process.whereis(Grpc) do
+      nil -> :ok
+      pid ->
+        try do
+          GenServer.stop(pid)
+        rescue
+          _ -> :ok
+        end
+    end
+    :ok
+  end
+
   describe "gRPC Transport" do
     setup do
       # Start the gRPC transport for tests that need it

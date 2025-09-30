@@ -5,6 +5,7 @@ defmodule ExUtcp.Transports.Graphql.Connection do
 
   use GenServer
   require Logger
+  @behaviour ExUtcp.Transports.Graphql.ConnectionBehaviour
 
   defstruct [
     :provider,

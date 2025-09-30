@@ -1,6 +1,6 @@
-defmodule ExUtcp.Transports.WebSocket.ConnectionBehaviour do
+defmodule ExUtcp.Transports.Grpc.ConnectionBehaviour do
   @moduledoc """
-  Behaviour for WebSocket connections to enable mocking in tests.
+  Behaviour for gRPC connections to enable mocking in tests.
   """
 
   @callback start_link(provider :: map()) :: {:ok, pid()} | {:error, term()}
