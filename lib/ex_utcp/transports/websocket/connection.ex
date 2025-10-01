@@ -24,6 +24,11 @@ defmodule ExUtcp.Transports.WebSocket.Connection do
   Starts a new WebSocket connection.
   """
   @impl ExUtcp.Transports.WebSocket.ConnectionBehaviour
+  @spec start_link(map()) :: {:ok, pid()} | {:error, term()}
+  def start_link(provider) do
+    start_link(provider.url, provider, [])
+  end
+
   @spec start_link(String.t(), map(), keyword()) :: {:ok, pid()} | {:error, term()}
   def start_link(url, provider, opts \\ []) do
     state = %__MODULE__{
@@ -196,6 +201,72 @@ defmodule ExUtcp.Transports.WebSocket.Connection do
     GenServer.call(pid, :clear_messages)
   end
 
+  @doc """
+  Calls a tool through the WebSocket connection.
+  """
+  @impl ExUtcp.Transports.WebSocket.ConnectionBehaviour
+  @spec call_tool(pid(), String.t(), map(), keyword()) :: {:ok, map()} | {:error, term()}
+  def call_tool(pid, tool_name, args, opts \\ []) do
+    message = %{
+      type: "tool_call",
+      tool: tool_name,
+      args: args
+    }
+
+    case send_message(pid, Jason.encode!(message)) do
+      :ok ->
+        case get_next_message(pid, Keyword.get(opts, :timeout, 30_000)) do
+          {:ok, response} -> {:ok, response}
+          {:error, reason} -> {:error, reason}
+        end
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  @doc """
+  Calls a tool stream through the WebSocket connection.
+  """
+  @impl ExUtcp.Transports.WebSocket.ConnectionBehaviour
+  @spec call_tool_stream(pid(), String.t(), map(), keyword()) :: {:ok, Enumerable.t()} | {:error, term()}
+  def call_tool_stream(pid, tool_name, args, opts \\ []) do
+    message = %{
+      type: "tool_stream",
+      tool: tool_name,
+      args: args
+    }
+
+    case send_message(pid, Jason.encode!(message)) do
+      :ok ->
+        stream = Stream.unfold(nil, fn _ ->
+          case get_next_message(pid, Keyword.get(opts, :timeout, 5_000)) do
+            {:ok, %{"type" => "stream_end"}} -> nil
+            {:ok, data} -> {data, nil}
+            {:error, _} -> nil
+          end
+        end)
+        {:ok, stream}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  @doc """
+  Gets the last used timestamp.
+  """
+  @impl ExUtcp.Transports.WebSocket.ConnectionBehaviour
+  @spec get_last_used(pid()) :: integer()
+  def get_last_used(pid) do
+    GenServer.call(pid, :get_last_used)
+  end
+
+  @doc """
+  Updates the last used timestamp.
+  """
+  @impl ExUtcp.Transports.WebSocket.ConnectionBehaviour
+  @spec update_last_used(pid()) :: :ok
+  def update_last_used(pid) do
+    GenServer.cast(pid, :update_last_used)
+  end
+
   # GenServer callbacks for message queue management
 
   def handle_call(:get_next_message, _from, state) do
@@ -219,8 +290,22 @@ defmodule ExUtcp.Transports.WebSocket.Connection do
     {:reply, :ok, new_state}
   end
 
+  def handle_call(:get_last_used, _from, state) do
+    {:reply, state.last_ping || System.monotonic_time(:millisecond), state}
+  end
+
   def handle_call(msg, _from, state) do
     Logger.warning("Unhandled WebSocket call: #{inspect(msg)}")
     {:reply, {:error, :not_implemented}, state}
+  end
+
+  def handle_cast(:update_last_used, state) do
+    new_state = %{state | last_ping: System.monotonic_time(:millisecond)}
+    {:noreply, new_state}
+  end
+
+  def handle_cast(msg, state) do
+    Logger.warning("Unhandled WebSocket cast: #{inspect(msg)}")
+    {:noreply, state}
   end
 end

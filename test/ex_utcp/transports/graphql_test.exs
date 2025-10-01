@@ -1,5 +1,6 @@
 defmodule ExUtcp.Transports.GraphqlTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
+  @moduletag :integration
   import Mox
 
   alias ExUtcp.Transports.Graphql

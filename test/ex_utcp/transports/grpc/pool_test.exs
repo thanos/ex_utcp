@@ -5,13 +5,24 @@ defmodule ExUtcp.Transports.Grpc.PoolTest do
   alias ExUtcp.Providers
 
   setup do
-    # Start the pool for each test if not already started
+    # Stop any existing pool and start fresh
     case Process.whereis(Pool) do
-      nil ->
-        {:ok, pool_pid} = Pool.start_link(max_connections: 2)
-        %{pool_pid: pool_pid}
+      nil -> :ok
       pool_pid ->
-        %{pool_pid: pool_pid}
+        try do
+          if Process.alive?(pool_pid) do
+            GenServer.stop(pool_pid, :normal, 500)
+            Process.sleep(300) # Give it more time to stop
+          end
+        rescue
+          _ -> :ok
+        end
+    end
+
+    # Try to start the pool, handle already started error
+    case Pool.start_link(max_connections: 2) do
+      {:ok, pool_pid} -> %{pool_pid: pool_pid}
+      {:error, {:already_started, pool_pid}} -> %{pool_pid: pool_pid}
     end
   end
 

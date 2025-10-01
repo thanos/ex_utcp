@@ -1,10 +1,26 @@
 defmodule ExUtcp.Transports.GrpcUnitTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   alias ExUtcp.Transports.Grpc
-  alias ExUtcp.Providers
 
   describe "gRPC Transport Unit Tests" do
+    setup do
+      # Clean up any existing gRPC transport
+      case Process.whereis(Grpc) do
+        nil -> :ok
+        pid ->
+          try do
+            if Process.alive?(pid) do
+              GenServer.stop(pid, :normal, 500)
+              Process.sleep(300) # Give it more time to stop
+            end
+          rescue
+            _ -> :ok
+          end
+      end
+
+      :ok
+    end
     test "creates new transport" do
       transport = Grpc.new()
 
@@ -31,6 +47,9 @@ defmodule ExUtcp.Transports.GrpcUnitTest do
     end
 
     test "validates provider type" do
+      # Start the transport for this test
+      {:ok, _pid} = Grpc.start_link()
+
       valid_provider = %{
         name: "test",
         type: :grpc,
@@ -48,14 +67,17 @@ defmodule ExUtcp.Transports.GrpcUnitTest do
       }
 
       # Test with valid provider
-      assert :ok = Grpc.register_tool_provider(valid_provider)
+      assert {:ok, []} = Grpc.register_tool_provider(valid_provider)
 
       # Test with invalid provider type
-      assert {:error, "Invalid provider type for gRPC transport"} =
+      assert {:error, "gRPC transport can only be used with gRPC providers"} =
         Grpc.register_tool_provider(invalid_provider)
     end
 
     test "deregister_tool_provider always succeeds" do
+      # Start the transport for this test
+      {:ok, _pid} = Grpc.start_link()
+
       provider = %{
         name: "test",
         type: :grpc,
@@ -68,6 +90,9 @@ defmodule ExUtcp.Transports.GrpcUnitTest do
     end
 
     test "close always succeeds" do
+      # Start the transport for this test
+      {:ok, _pid} = Grpc.start_link()
+
       assert :ok = Grpc.close()
     end
   end

@@ -31,6 +31,7 @@ defmodule ExUtcp.Transports.Graphql.Connection do
   Starts a new GraphQL connection process.
   """
   @spec start_link(map(), keyword()) :: {:ok, pid()} | {:error, term()}
+  @impl true
   def start_link(provider, opts \\ []) do
     GenServer.start_link(__MODULE__, {provider, opts})
   end
@@ -39,6 +40,7 @@ defmodule ExUtcp.Transports.Graphql.Connection do
   Executes a GraphQL query.
   """
   @spec query(pid(), String.t(), map(), keyword()) :: {:ok, map()} | {:error, term()}
+  @impl true
   def query(pid, query_string, variables \\ %{}, opts \\ []) do
     GenServer.call(pid, {:query, query_string, variables, opts})
   end
@@ -47,6 +49,7 @@ defmodule ExUtcp.Transports.Graphql.Connection do
   Executes a GraphQL mutation.
   """
   @spec mutation(pid(), String.t(), map(), keyword()) :: {:ok, map()} | {:error, term()}
+  @impl true
   def mutation(pid, mutation_string, variables \\ %{}, opts \\ []) do
     GenServer.call(pid, {:mutation, mutation_string, variables, opts})
   end
@@ -55,6 +58,7 @@ defmodule ExUtcp.Transports.Graphql.Connection do
   Executes a GraphQL subscription.
   """
   @spec subscription(pid(), String.t(), map(), keyword()) :: {:ok, [map()]} | {:error, term()}
+  @impl true
   def subscription(pid, subscription_string, variables \\ %{}, opts \\ []) do
     GenServer.call(pid, {:subscription, subscription_string, variables, opts})
   end
@@ -63,6 +67,7 @@ defmodule ExUtcp.Transports.Graphql.Connection do
   Introspects the GraphQL schema.
   """
   @spec introspect_schema(pid(), keyword()) :: {:ok, map()} | {:error, term()}
+  @impl true
   def introspect_schema(pid, opts \\ []) do
     GenServer.call(pid, {:introspect_schema, opts})
   end
@@ -71,6 +76,7 @@ defmodule ExUtcp.Transports.Graphql.Connection do
   Closes the GraphQL connection.
   """
   @spec close(pid()) :: :ok
+  @impl true
   def close(pid) do
     GenServer.stop(pid)
   end
@@ -81,6 +87,24 @@ defmodule ExUtcp.Transports.Graphql.Connection do
   @spec healthy?(pid()) :: boolean()
   def healthy?(pid) do
     GenServer.call(pid, :healthy?)
+  end
+
+  @doc """
+  Gets the last used timestamp.
+  """
+  @spec get_last_used(pid()) :: integer()
+  @impl true
+  def get_last_used(pid) do
+    GenServer.call(pid, :get_last_used)
+  end
+
+  @doc """
+  Updates the last used timestamp.
+  """
+  @spec update_last_used(pid()) :: :ok
+  @impl true
+  def update_last_used(pid) do
+    GenServer.call(pid, :update_last_used)
   end
 
   # GenServer callbacks
@@ -170,6 +194,15 @@ defmodule ExUtcp.Transports.Graphql.Connection do
   def handle_call(:healthy?, _from, state) do
     healthy = state.connection_state == :connected and state.client != nil
     {:reply, healthy, state}
+  end
+
+  def handle_call(:get_last_used, _from, state) do
+    {:reply, state.last_used_at, state}
+  end
+
+  def handle_call(:update_last_used, _from, state) do
+    new_state = %{state | last_used_at: System.monotonic_time(:millisecond)}
+    {:reply, :ok, new_state}
   end
 
   @impl GenServer
@@ -486,7 +519,4 @@ defmodule ExUtcp.Transports.Graphql.Connection do
     end
   end
 
-  defp update_last_used(state) do
-    %{state | last_used: DateTime.utc_now()}
-  end
 end

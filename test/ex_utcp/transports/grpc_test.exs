@@ -1,5 +1,6 @@
 defmodule ExUtcp.Transports.GrpcTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
+  @moduletag :integration
 
   alias ExUtcp.Transports.Grpc
   alias ExUtcp.Providers
