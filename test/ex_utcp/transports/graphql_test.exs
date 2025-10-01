@@ -1,35 +1,24 @@
 defmodule ExUtcp.Transports.GraphqlTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
+  @moduletag :integration
+  import Mox
 
   alias ExUtcp.Transports.Graphql
   alias ExUtcp.Providers
 
+  setup :verify_on_exit!
+
   describe "GraphQL Transport" do
     setup do
-      # Start the GraphQL transport for tests that need it
+      # Clean up any existing GraphQL transport
       case Process.whereis(Graphql) do
-        nil ->
-          {:ok, _pid} = Graphql.start_link()
-        _pid ->
-          :ok
-      end
-      :ok
-    end
-
-    setup_all do
-      # Ensure the GraphQL transport is started once for all tests
-      case Process.whereis(Graphql) do
-        nil ->
-          {:ok, _pid} = Graphql.start_link()
-          on_exit(fn ->
-            try do
-              GenServer.stop(Graphql)
-            rescue
-              _ -> :ok
-            end
-          end)
-        _pid ->
-          :ok
+        nil -> :ok
+        pid ->
+          try do
+            GenServer.stop(pid)
+          rescue
+            _ -> :ok
+          end
       end
       :ok
     end

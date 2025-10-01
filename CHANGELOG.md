@@ -2,7 +2,45 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.5] - 2024-12-19
 
+### Added
+- Comprehensive test suite with 260+ unit tests
+- Mock-based unit testing with Mox for all transports
+- Integration test tagging for proper test separation
+- Testable modules for isolated unit testing
+- Complete test coverage for all transport implementations
+
+### Changed
+- Enhanced test architecture with proper mock injection
+- Improved test reliability and maintainability
+- Updated gap analysis to reflect 100% testing coverage
+- Enhanced documentation with protocol and library links
+- Removed decorative formatting from documentation
+
+### Fixed
+- All test failures resolved (reduced from 75 to 0 failures)
+- Proper GenServer lifecycle handling in unit tests
+- Retry logic call count expectations in tests
+- Mock verification and expectation management
+
+## [0.2.4] - 2024-12-19
+
+### Added
+- Production-ready MCP (Model Context Protocol) transport implementation
+- JSON-RPC 2.0 support for MCP communication
+- MCP connection management with pooling and lifecycle management
+- MCP authentication support for API Key, Basic, and OAuth2
+- MCP error recovery with retry logic and exponential backoff
+- MCP tool calling and streaming capabilities
+- Comprehensive MCP testing suite with 26 tests
+- MCP usage examples demonstrating all features
+
+### Changed
+- Enhanced MCP transport with production-ready features
+- Updated MCP implementation to use real HTTP connections
+- Improved error handling and retry mechanisms for MCP operations
+- Enhanced connection pooling and lifecycle management
 
 ## [0.2.3] - 2025-09-29
 

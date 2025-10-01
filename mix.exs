@@ -4,7 +4,7 @@ defmodule ExUtcp.MixProject do
   def project do
     [
       app: :ex_utcp,
-      version: "0.2.3",
+      version: "0.2.5",
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -47,8 +47,8 @@ defmodule ExUtcp.MixProject do
       # Testing
       {:ex_doc, "~> 0.30", only: :dev, runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.4", only: [:dev], runtime: false},
-      {:mox, "~> 1.0", only: :test}
+      {:mox, "~> 1.0", only: :test},
+      {:dialyxir, "~> 1.4", only: [:dev], runtime: false}
     ]
   end
 

@@ -189,7 +189,8 @@ defmodule ExUtcp.Client do
       "cli" => ExUtcp.Transports.Cli,
       "websocket" => ExUtcp.Transports.WebSocket,
       "grpc" => ExUtcp.Transports.Grpc,
-      "graphql" => ExUtcp.Transports.Graphql
+      "graphql" => ExUtcp.Transports.Graphql,
+      "mcp" => ExUtcp.Transports.Mcp
       # Add more transports as they are implemented
     }
   end
@@ -244,6 +245,7 @@ defmodule ExUtcp.Client do
       "websocket" -> parse_websocket_provider(provider_data)
       "grpc" -> parse_grpc_provider(provider_data)
       "graphql" -> parse_graphql_provider(provider_data)
+      "mcp" -> parse_mcp_provider(provider_data)
       _ -> {:error, "Unknown provider type: #{provider_type}"}
     end
   end
@@ -305,6 +307,15 @@ defmodule ExUtcp.Client do
       url: Map.get(data, "url", ""),
       auth: parse_auth(Map.get(data, "auth")),
       headers: Map.get(data, "headers", %{})
+    ])
+    {:ok, provider}
+  end
+
+  defp parse_mcp_provider(data) do
+    provider = Providers.new_mcp_provider([
+      name: Map.get(data, "name", ""),
+      url: Map.get(data, "url", ""),
+      auth: parse_auth(Map.get(data, "auth"))
     ])
     {:ok, provider}
   end
