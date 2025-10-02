@@ -265,7 +265,9 @@ defmodule ExUtcp.Transports.Grpc do
         {:ok, conn} ->
           case Connection.call_tool_stream(conn, tool_name, args, state.connection_timeout) do
             {:ok, results} ->
-              {:ok, %{type: :stream, data: results}}
+              # Enhance the stream with proper gRPC streaming metadata
+              enhanced_stream = create_grpc_stream(results, tool_name, provider)
+              {:ok, %{type: :stream, data: enhanced_stream, metadata: %{"transport" => "grpc", "tool" => tool_name, "protocol" => "grpc"}}}
             {:error, reason} ->
               {:error, "Failed to call tool stream: #{inspect(reason)}"}
           end
@@ -273,6 +275,25 @@ defmodule ExUtcp.Transports.Grpc do
           {:error, "Failed to get connection: #{inspect(reason)}"}
       end
     end, state.retry_config)
+  end
+
+  defp create_grpc_stream(results, tool_name, provider) do
+    Stream.with_index(results, 0)
+    |> Stream.map(fn {result, index} ->
+      %{
+        data: result,
+        metadata: %{
+          "sequence" => index,
+          "timestamp" => System.monotonic_time(:millisecond),
+          "tool" => tool_name,
+          "provider" => provider.name,
+          "protocol" => "grpc",
+          "service" => provider.service_name
+        },
+        timestamp: System.monotonic_time(:millisecond),
+        sequence: index
+      }
+    end)
   end
 
   defp get_connection_and_execute(provider, fun, state) do

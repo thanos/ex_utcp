@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.6] - 2024-12-19
+
+### Added
+- Comprehensive streaming support across all transports
+- Enhanced type system with stream_chunk, stream_result, stream_error, and stream_end types
+- HTTP Server-Sent Events (SSE) streaming implementation
+- Enhanced WebSocket streaming with proper metadata tracking
+- Improved GraphQL streaming with subscription support
+- Enhanced gRPC streaming with service-specific metadata
+- Improved MCP streaming with JSON-RPC 2.0 support
+- 21 comprehensive streaming unit tests
+- Complete streaming examples for all transports
+- Advanced stream processing patterns and utilities
+
+### Changed
+- HTTP transport now supports streaming (supports_streaming? returns true)
+- All transport streaming implementations enhanced with rich metadata
+- Stream result structures standardized across all transports
+- Enhanced error handling and stream termination across all transports
+
+### Fixed
+- Stream processing consistency across all transports
+- Metadata tracking and sequence numbering
+- Error handling in streaming scenarios
+- Type safety improvements for streaming operations
+
 ## [0.2.5] - 2024-12-19
 
 ### Added

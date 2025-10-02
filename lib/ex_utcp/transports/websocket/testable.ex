@@ -295,7 +295,7 @@ defmodule ExUtcp.Transports.WebSocket.Testable do
     # Convert headers to the format expected by websockex
     ws_headers = Enum.map(headers, fn {k, v} -> {String.to_atom(k), v} end)
 
-    opts = [
+    _opts = [
       extra_headers: ws_headers,
       timeout: transport.connection_timeout,
       transport_pid: self(),
@@ -343,7 +343,7 @@ defmodule ExUtcp.Transports.WebSocket.Testable do
     end
   end
 
-  defp send_tool_request(transport, conn, tool_name, args, provider) do
+  defp send_tool_request(transport, conn, tool_name, args, _provider) do
     case conn do
       :mock_connection ->
         # Use the injected mock module

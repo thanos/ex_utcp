@@ -26,7 +26,7 @@ defmodule ExUtcp.Transports.Behaviour do
   @doc """
   Calls a tool with streaming support.
   """
-  @callback call_tool_stream(String.t(), map(), T.provider()) :: {:ok, T.stream_result()} | {:error, any()}
+  @callback call_tool_stream(String.t(), map(), T.provider()) :: T.stream_call_result()
 
   @doc """
   Closes the transport and cleans up resources.

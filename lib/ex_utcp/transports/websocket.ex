@@ -177,11 +177,38 @@ defmodule ExUtcp.Transports.WebSocket do
     with_retry(fn ->
       with {:ok, conn} <- get_or_create_connection(provider),
            {:ok, stream_result} <- send_tool_stream_request(conn, tool_name, args, provider) do
-        {:ok, stream_result}
+        # Enhance the stream with proper WebSocket streaming metadata
+        enhanced_stream = create_websocket_stream(stream_result, tool_name, provider)
+        {:ok, %{type: :stream, data: enhanced_stream, metadata: %{"transport" => "websocket", "tool" => tool_name, "protocol" => "ws"}}}
       else
         {:error, reason} -> {:error, "Failed to execute tool stream: #{inspect(reason)}"}
       end
     end, retry_config)
+  end
+
+  defp create_websocket_stream(stream, tool_name, provider) do
+    Stream.with_index(stream, 0)
+    |> Stream.map(fn {chunk, index} ->
+      case chunk do
+        %{"type" => "stream_end"} ->
+          %{type: :end, metadata: %{"sequence" => index, "tool" => tool_name}}
+        %{"type" => "error", "message" => error} ->
+          %{type: :error, error: error, code: 500, metadata: %{"sequence" => index}}
+        data ->
+          %{
+            data: data,
+            metadata: %{
+              "sequence" => index,
+              "timestamp" => System.monotonic_time(:millisecond),
+              "tool" => tool_name,
+              "provider" => provider.name,
+              "protocol" => "ws"
+            },
+            timestamp: System.monotonic_time(:millisecond),
+            sequence: index
+          }
+      end
+    end)
   end
 
   defp get_or_create_connection(provider) do
