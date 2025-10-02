@@ -7,7 +7,8 @@
 
 Elixir implementation of the Universal Tool Calling Protocol (UTCP).
 
-<img width="1024" height="1024" alt="ex_utcp" src="https://github.com/user-attachments/assets/d94d0357-6b73-4e8d-b9d9-a2359131e689" />
+<img width="679" height="631" alt="ex_utcp-2" src="https://github.com/user-attachments/assets/372c27f3-0e65-4a66-80f3-659f9b40f3e0" />
+
 
 
 
