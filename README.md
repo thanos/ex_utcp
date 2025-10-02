@@ -7,6 +7,10 @@
 
 Elixir implementation of the Universal Tool Calling Protocol (UTCP).
 
+<img width="1024" height="1024" alt="ex_utcp" src="https://github.com/user-attachments/assets/d94d0357-6b73-4e8d-b9d9-a2359131e689" />
+
+
+
 ## Introduction
 
 The Universal Tool Calling Protocol (UTCP) is a modern, flexible, and scalable standard for defining and interacting with tools across a wide variety of communication protocols. It is designed to be easy to use, interoperable, and extensible, making it a powerful choice for building and consuming tool-based services.
