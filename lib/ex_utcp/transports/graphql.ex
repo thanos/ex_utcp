@@ -295,7 +295,9 @@ defmodule ExUtcp.Transports.Graphql do
             {:subscription, subscription_string, variables} ->
               case Connection.subscription(conn, subscription_string, variables, [timeout: state.connection_timeout]) do
                 {:ok, results} ->
-                  {:ok, %{type: :stream, data: results}}
+                  # Create a proper streaming result with enhanced metadata
+                  stream = create_graphql_stream(results, tool_name, provider)
+                  {:ok, %{type: :stream, data: stream, metadata: %{"transport" => "graphql", "tool" => tool_name, "subscription" => true}}}
                 {:error, reason} ->
                   {:error, "Failed to execute subscription: #{inspect(reason)}"}
               end
@@ -304,6 +306,23 @@ defmodule ExUtcp.Transports.Graphql do
           {:error, "Failed to get connection: #{inspect(reason)}"}
       end
     end, state.retry_config)
+  end
+
+  defp create_graphql_stream(results, tool_name, provider) do
+    Stream.with_index(results, 0)
+    |> Stream.map(fn {result, index} ->
+      %{
+        data: result,
+        metadata: %{
+          "sequence" => index,
+          "timestamp" => System.monotonic_time(:millisecond),
+          "tool" => tool_name,
+          "provider" => provider.name
+        },
+        timestamp: System.monotonic_time(:millisecond),
+        sequence: index
+      }
+    end)
   end
 
   defp get_connection_and_execute(provider, fun, state) do

@@ -225,13 +225,53 @@ defmodule ExUtcp.Transports.Mcp do
       case Pool.get_connection(provider) do
         {:ok, conn} ->
           case Connection.call_tool_stream(conn, tool_name, args, [timeout: state.connection_timeout]) do
-            {:ok, stream} -> {:ok, stream}
+            {:ok, stream} ->
+              # Enhance the stream with proper MCP streaming metadata
+              enhanced_stream = create_mcp_stream(stream, tool_name, provider)
+              {:ok, %{type: :stream, data: enhanced_stream, metadata: %{"transport" => "mcp", "tool" => tool_name, "protocol" => "json-rpc-2.0"}}}
             {:error, reason} -> {:error, "Failed to call tool stream: #{inspect(reason)}"}
           end
         {:error, reason} ->
           {:error, "Failed to get connection: #{inspect(reason)}"}
       end
     end, state.retry_config)
+  end
+
+  defp create_mcp_stream(stream, tool_name, provider) do
+    Stream.with_index(stream, 0)
+    |> Stream.map(fn {chunk, index} ->
+      case chunk do
+        %{type: :stream, data: data} ->
+          %{
+            data: data,
+            metadata: %{
+              "sequence" => index,
+              "timestamp" => System.monotonic_time(:millisecond),
+              "tool" => tool_name,
+              "provider" => provider.name,
+              "protocol" => "json-rpc-2.0"
+            },
+            timestamp: System.monotonic_time(:millisecond),
+            sequence: index
+          }
+        %{type: :error, error: error} ->
+          %{type: :error, error: error, code: 500, metadata: %{"sequence" => index}}
+        %{type: :end} ->
+          %{type: :end, metadata: %{"sequence" => index}}
+        other ->
+          %{
+            data: other,
+            metadata: %{
+              "sequence" => index,
+              "timestamp" => System.monotonic_time(:millisecond),
+              "tool" => tool_name,
+              "provider" => provider.name
+            },
+            timestamp: System.monotonic_time(:millisecond),
+            sequence: index
+          }
+      end
+    end)
   end
 
   defp execute_request(method, params, provider, state) do

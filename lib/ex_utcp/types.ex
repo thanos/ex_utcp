@@ -179,9 +179,36 @@ defmodule ExUtcp.Types do
 
   @type transport :: module()
 
-  @type stream_result :: any()
+  @type stream_chunk :: %{
+    data: any(),
+    metadata: %{String.t() => any()} | nil,
+    timestamp: integer() | nil,
+    sequence: integer() | nil
+  }
+
+  @type stream_result :: %{
+    type: :stream,
+    data: [stream_chunk()] | Enumerable.t(),
+    metadata: %{String.t() => any()} | nil
+  }
+
+  @type stream_error :: %{
+    type: :error,
+    error: String.t(),
+    code: integer() | nil,
+    metadata: %{String.t() => any()} | nil
+  }
+
+  @type stream_end :: %{
+    type: :end,
+    metadata: %{String.t() => any()} | nil
+  }
+
+  @type stream_event :: stream_chunk() | stream_error() | stream_end()
 
   @type call_result :: {:ok, any()} | {:error, any()}
+
+  @type stream_call_result :: {:ok, stream_result()} | {:error, any()}
 
   @type search_result :: {:ok, [tool()]} | {:error, any()}
 

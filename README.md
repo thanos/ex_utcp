@@ -26,10 +26,12 @@ In contrast to other protocols like [MCP](https://modelcontextprotocol.io/), UTC
 ## Features
 
 * Built-in transports for HTTP, CLI, Server-Sent Events, streaming HTTP, [GraphQL](https://graphql.org/), [MCP](https://modelcontextprotocol.io/), [WebSocket](https://tools.ietf.org/html/rfc6455), [gRPC](https://grpc.io/), TCP, UDP, and WebRTC
+* **Comprehensive streaming support** across all transports with real-time capabilities
+* **Enhanced type system** with rich streaming types and metadata tracking
 * Variable substitution via environment variables or `.env` files
 * In-memory repository for storing providers and tools discovered at runtime
 * Utilities such as `OpenApiConverter` to convert OpenAPI definitions into UTCP manuals
-* Example programs demonstrating the client usage
+* Example programs demonstrating the client usage including streaming examples
 
 ## Installation
 
@@ -194,10 +196,11 @@ The library is organized into several main components:
 
 #### High Priority (Core Functionality)
 - [x] Implement Missing Transports: WebSocket, gRPC, GraphQL, MCP
-- [x] Add Streaming Support: Complete `CallToolStream` implementation
+- [x] Add Streaming Support: Complete `CallToolStream` implementation with comprehensive streaming across all transports
 - [x] Implement MCP Transport: Model Context Protocol integration
-- [x] Comprehensive Testing: Complete test suite with 260+ tests
+- [x] Comprehensive Testing: Complete test suite with 297+ tests including 21 streaming tests
 - [x] Mock-based Unit Testing: Isolated testing with Mox mocks
+- [x] Enhanced Type System: Rich streaming types and metadata tracking
 - [ ] OpenAPI Converter: Automatic API discovery
 - [ ] Advanced Search: Implement sophisticated search algorithms
 

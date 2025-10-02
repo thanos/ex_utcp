@@ -50,8 +50,11 @@ defmodule ExUtcp.Transports.Http do
   end
 
   @impl ExUtcp.Transports.Behaviour
-  def call_tool_stream(_tool_name, _args, _provider) do
-    {:error, "Streaming not supported by HTTP transport"}
+  def call_tool_stream(tool_name, args, provider) do
+    case provider.type do
+      :http -> execute_tool_stream(tool_name, args, provider)
+      _ -> {:error, "HTTP transport can only be used with HTTP providers"}
+    end
   end
 
   @impl ExUtcp.Transports.Behaviour
@@ -66,7 +69,7 @@ defmodule ExUtcp.Transports.Http do
 
   @impl ExUtcp.Transports.Behaviour
   def supports_streaming? do
-    false
+    true
   end
 
   # Private functions
@@ -213,6 +216,136 @@ defmodule ExUtcp.Transports.Http do
       average_response_size: Map.get(tool_data, "average_response_size"),
       provider: provider
     ])
+  end
+
+  defp execute_tool_stream(tool_name, args, provider) do
+    # Handle URL template substitution for path parameters
+    url_template = substitute_url_params(provider.url, args)
+    remaining_args = remove_url_params(args, provider.url)
+
+    with {:ok, stream} <- make_streaming_request(provider, url_template, remaining_args) do
+      {:ok, %{type: :stream, data: stream, metadata: %{"transport" => "http", "tool" => tool_name}}}
+    else
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  defp make_streaming_request(provider, url, args) do
+    headers = build_headers(provider)
+    headers = Auth.apply_to_headers(provider.auth, headers)
+    headers = Map.put(headers, "Accept", "text/event-stream")
+    headers = Map.put(headers, "Cache-Control", "no-cache")
+
+    request_opts = [
+      method: String.downcase(provider.http_method),
+      url: url,
+      headers: headers,
+      json: args,
+      receive_timeout: :infinity,
+      stream_to: self()
+    ]
+
+    case Req.request(request_opts) do
+      {:ok, response} ->
+        if response.status == 200 do
+          stream = create_sse_stream(response)
+          {:ok, stream}
+        else
+          {:error, "HTTP #{response.status}: #{inspect(response.body)}"}
+        end
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  defp create_sse_stream(response) do
+    Stream.resource(
+      fn ->
+        # Initialize stream state
+        %{response: response, buffer: "", sequence: 0}
+      end,
+      fn state ->
+        case read_sse_chunk(state) do
+          {:ok, chunk, new_state} ->
+            {[chunk], new_state}
+          {:error, :end} ->
+            {:halt, state}
+          {:error, reason} ->
+            {[%{type: :error, error: reason, code: 500}], state}
+        end
+      end,
+      fn _state -> :ok end
+    )
+  end
+
+  defp read_sse_chunk(state) do
+    case Req.Response.get_body(state.response, :stream) do
+      {:ok, data, new_response} ->
+        buffer = state.buffer <> data
+        {chunks, remaining_buffer} = parse_sse_data(buffer)
+
+        new_state = %{state | response: new_response, buffer: remaining_buffer}
+
+        case chunks do
+          [] -> read_sse_chunk(new_state)
+          [chunk | _rest] ->
+            processed_chunk = process_sse_chunk(chunk, state.sequence)
+            new_state = %{new_state | sequence: state.sequence + 1}
+            {:ok, processed_chunk, new_state}
+        end
+      {:error, :end} ->
+        {:error, :end}
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  defp parse_sse_data(buffer) do
+    lines = String.split(buffer, "\n", trim: true)
+    {chunks, remaining} = parse_sse_lines(lines, [])
+    {chunks, remaining}
+  end
+
+  defp parse_sse_lines(lines, acc) do
+    case lines do
+      [] -> {Enum.reverse(acc), ""}
+      [line | rest] ->
+        case parse_sse_line(line) do
+          {:ok, chunk} -> parse_sse_lines(rest, [chunk | acc])
+          :continue -> {Enum.reverse(acc), Enum.join([line | rest], "\n")}
+        end
+    end
+  end
+
+  defp parse_sse_line(line) do
+    case String.trim(line) do
+      "" -> :continue
+      "data: [DONE]" -> {:ok, %{type: :end}}
+      "data: " <> data ->
+        case Jason.decode(data) do
+          {:ok, json_data} -> {:ok, %{type: :data, content: json_data}}
+          {:error, _} -> {:ok, %{type: :data, content: data}}
+        end
+      "event: " <> _event -> :continue
+      "id: " <> _id -> :continue
+      "retry: " <> _retry -> :continue
+      _ -> :continue
+    end
+  end
+
+  defp process_sse_chunk(chunk, sequence) do
+    case chunk do
+      %{type: :data, content: content} ->
+        %{
+          data: content,
+          metadata: %{"sequence" => sequence, "timestamp" => System.monotonic_time(:millisecond)},
+          timestamp: System.monotonic_time(:millisecond),
+          sequence: sequence
+        }
+      %{type: :end} ->
+        %{type: :end, metadata: %{"sequence" => sequence}}
+      other ->
+        other
+    end
   end
 
   defp parse_schema(schema_data) do

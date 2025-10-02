@@ -29,7 +29,7 @@ defmodule ExUtcp.Transports.SimpleUnitTest do
       transport = Http.new()
       assert %Http{} = transport
       assert Http.transport_name() == "http"
-      assert Http.supports_streaming?() == false
+      assert Http.supports_streaming?() == true
     end
 
     test "CLI transport basic functions" do
