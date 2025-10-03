@@ -9,7 +9,7 @@ defmodule ExUtcp.Client do
   use GenServer
 
   alias ExUtcp.Types, as: T
-  alias ExUtcp.{Config, Repository, Tools, Providers}
+  alias ExUtcp.{Config, Repository, Tools, Providers, OpenApiConverter}
 
   defstruct [
     :config,
@@ -432,5 +432,117 @@ defmodule ExUtcp.Client do
             end
         end
     end
+  end
+
+  @doc """
+  Converts an OpenAPI specification to UTCP tools and registers them.
+
+  ## Parameters
+
+  - `client`: UTCP client
+  - `spec`: OpenAPI specification (map, URL, or file path)
+  - `opts`: Conversion options
+
+  ## Returns
+
+  `{:ok, tools}` on success, `{:error, reason}` on failure.
+  """
+  @spec convert_openapi(GenServer.server(), map() | String.t(), keyword()) :: T.register_result()
+  def convert_openapi(client, spec, opts \\ []) do
+    GenServer.call(client, {:convert_openapi, spec, opts})
+  end
+
+  @doc """
+  Converts multiple OpenAPI specifications to UTCP tools and registers them.
+
+  ## Parameters
+
+  - `client`: UTCP client
+  - `specs`: List of OpenAPI specifications
+  - `opts`: Conversion options
+
+  ## Returns
+
+  `{:ok, tools}` on success, `{:error, reason}` on failure.
+  """
+  @spec convert_multiple_openapi(GenServer.server(), list(), keyword()) :: T.register_result()
+  def convert_multiple_openapi(client, specs, opts \\ []) do
+    GenServer.call(client, {:convert_multiple_openapi, specs, opts})
+  end
+
+  @doc """
+  Validates an OpenAPI specification.
+
+  ## Parameters
+
+  - `client`: UTCP client
+  - `spec`: OpenAPI specification
+
+  ## Returns
+
+  `{:ok, validation_result}` on success, `{:error, reason}` on failure.
+  """
+  @spec validate_openapi(GenServer.server(), map()) :: {:ok, map()} | {:error, term()}
+  def validate_openapi(client, spec) do
+    GenServer.call(client, {:validate_openapi, spec})
+  end
+
+  # GenServer callbacks
+
+  def handle_call({:convert_openapi, spec, opts}, _from, state) do
+    case convert_openapi_impl(spec, opts) do
+      {:ok, tools} ->
+        # Register all tools
+        results = Enum.map(tools, fn tool ->
+          Repository.add_tool(state.repository, tool)
+        end)
+
+        # Check if any registration failed
+        case Enum.find(results, &match?({:error, _}, &1)) do
+          nil -> {:reply, {:ok, tools}, state}
+          error -> {:reply, error, state}
+        end
+      error -> {:reply, error, state}
+    end
+  end
+
+  def handle_call({:convert_multiple_openapi, specs, opts}, _from, state) do
+    case convert_multiple_openapi_impl(specs, opts) do
+      {:ok, tools} ->
+        # Register all tools
+        results = Enum.map(tools, fn tool ->
+          Repository.add_tool(state.repository, tool)
+        end)
+
+        # Check if any registration failed
+        case Enum.find(results, &match?({:error, _}, &1)) do
+          nil -> {:reply, {:ok, tools}, state}
+          error -> {:reply, error, state}
+        end
+      error -> {:reply, error, state}
+    end
+  end
+
+  def handle_call({:validate_openapi, spec}, _from, state) do
+    result = OpenApiConverter.validate(spec)
+    {:reply, result, state}
+  end
+
+  # Private functions
+
+  defp convert_openapi_impl(spec, opts) when is_map(spec) do
+    OpenApiConverter.convert(spec, opts)
+  end
+
+  defp convert_openapi_impl(url, opts) when is_binary(url) do
+    if String.starts_with?(url, "http") do
+      OpenApiConverter.convert_from_url(url, opts)
+    else
+      OpenApiConverter.convert_from_file(url, opts)
+    end
+  end
+
+  defp convert_multiple_openapi_impl(specs, opts) do
+    OpenApiConverter.convert_multiple(specs, opts)
   end
 end
