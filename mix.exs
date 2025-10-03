@@ -4,7 +4,7 @@ defmodule ExUtcp.MixProject do
   def project do
     [
       app: :ex_utcp,
-      version: "0.2.6",
+      version: "0.2.7",
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -43,6 +43,9 @@ defmodule ExUtcp.MixProject do
 
       # Environment variables
       {:dotenvy, "~> 0.8"},
+
+      # YAML support for OpenAPI
+      {:yaml_elixir, "~> 2.9"},
 
       # Testing
       {:ex_doc, "~> 0.30", only: :dev, runtime: false},

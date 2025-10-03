@@ -24,11 +24,12 @@ Key characteristics:
 
 * Transports: HTTP, CLI, WebSocket, gRPC, GraphQL, MCP
 * Streaming support across all transports
+* OpenAPI Converter: Automatic API discovery and tool generation
 * Variable substitution via environment variables or `.env` files
 * In-memory repository for providers and tools
 * Authentication: API Key, Basic, OAuth2
 * Connection pooling and lifecycle management
-* Comprehensive test suite with 260+ tests
+* Comprehensive test suite with 272+ tests
 
 ## Installation
 
@@ -160,6 +161,48 @@ config = Config.new(
 )
 ```
 
+## OpenAPI Converter
+
+The OpenAPI Converter automatically discovers and converts OpenAPI specifications into UTCP tools.
+
+### Basic Usage
+
+```elixir
+alias ExUtcp.{Client, Config}
+
+# Create a client
+{:ok, client} = Client.start_link(%{providers_file_path: nil, variables: %{}})
+
+# Convert OpenAPI spec from URL
+{:ok, tools} = Client.convert_openapi(client, "https://api.example.com/openapi.json")
+
+# Convert OpenAPI spec from file
+{:ok, tools} = Client.convert_openapi(client, "path/to/spec.yaml")
+
+# Convert with options
+{:ok, tools} = Client.convert_openapi(client, spec, %{
+  prefix: "my_api",
+  auth: %{type: "api_key", api_key: "Bearer ${API_KEY}"}
+})
+```
+
+### Supported Formats
+
+- OpenAPI 2.0 (Swagger)
+- OpenAPI 3.0
+- JSON and YAML specifications
+- URL and file-based specifications
+
+### Authentication Mapping
+
+The converter automatically maps OpenAPI security schemes to UTCP authentication:
+
+- API Key authentication
+- HTTP Basic authentication
+- HTTP Bearer authentication
+- OAuth2 flows
+- OpenID Connect
+
 ## Architecture
 
 The library is organized into several main components:
@@ -170,6 +213,7 @@ The library is organized into several main components:
 * ExUtcp.Transports - Transport layer implementations
 * ExUtcp.Tools - Tool definitions and management
 * ExUtcp.Repository - Tool and provider storage
+* ExUtcp.OpenApiConverter - OpenAPI specification conversion
 
 ## Implementation Status
 
@@ -200,7 +244,7 @@ The library is organized into several main components:
 | Streaming | Complete | Complete | Complete | 100% |
 | Connection Pooling | Complete | Complete | Complete | 100% |
 | Error Recovery | Complete | Complete | Complete | 100% |
-| OpenAPI Converter | Complete | Complete | Not Implemented | 0% |
+| OpenAPI Converter | Complete | Complete | Complete | 100% |
 | Tool Discovery | Complete | Complete | Complete | 100% |
 | Search | Advanced | Advanced | Basic | 60% |
 | **Testing** | | | | |
@@ -220,7 +264,7 @@ The library is organized into several main components:
 ### Priority Recommendations
 
 #### High Priority
-- [ ] OpenAPI Converter: Automatic API discovery and tool generation
+- [x] OpenAPI Converter: Automatic API discovery and tool generation
 - [ ] Advanced Search: Sophisticated search algorithms
 - [ ] TCP/UDP Transport: Low-level network protocols
 
@@ -238,14 +282,14 @@ The library is organized into several main components:
 #### Completed Features
 - 6 transports: HTTP, CLI, WebSocket, gRPC, GraphQL, MCP
 - Streaming support across all transports
+- OpenAPI Converter: Automatic API discovery and tool generation
 - Authentication: API Key, Basic, OAuth2
 - Connection pooling and lifecycle management
 - Error recovery with retry logic
-- 260+ tests with comprehensive coverage
+- 272+ tests with comprehensive coverage
 - Production examples for all transports
 
 #### Missing Features
-- OpenAPI Converter: Automatic API discovery and tool generation
 - Advanced Search: Sophisticated search algorithms
 - TCP/UDP Transport: Low-level network protocols
 - WebRTC Transport: Peer-to-peer communication
@@ -258,7 +302,7 @@ The library is organized into several main components:
 - [x] HTTP/HTTPS, CLI, WebSocket, gRPC, GraphQL, MCP
 
 #### Phase 2: Enhanced Features
-- [ ] OpenAPI Converter
+- [x] OpenAPI Converter
 - [ ] Advanced Search
 - [ ] Monitoring and Metrics
 
@@ -295,6 +339,7 @@ See `examples/` directory:
 - `graphql_example.exs` - GraphQL provider
 - `mcp_example.exs` - MCP provider
 - `streaming_examples.exs` - Streaming examples
+- `openapi_example.exs` - OpenAPI Converter examples
 
 ## Testing
 

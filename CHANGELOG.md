@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.7] - 2025-10-03
+
+### Added
+- OpenAPI Converter: Automatic API discovery and tool generation
+- Support for OpenAPI 2.0 (Swagger) and OpenAPI 3.0 specifications
+- JSON and YAML specification parsing
+- URL and file-based specification loading
+- Authentication scheme mapping (API Key, Basic, Bearer, OAuth2, OpenID Connect)
+- Tool generation from OpenAPI operations
+- Client integration for OpenAPI conversion
+- 12 comprehensive OpenAPI Converter tests
+- OpenAPI Converter examples and documentation
+
+### Changed
+- Updated gap analysis to reflect OpenAPI Converter completion
+- Enhanced documentation with OpenAPI Converter usage examples
+- Updated test count to 272+ tests
+
+### Fixed
+- Elixir type usage patterns in OpenAPI Converter
+- Infinite recursion in schema parsing
+- Content type handling for URL-based specifications
+- Prefix duplication in tool name generation
+- Argument error in security scheme parsing
+- Authentication parameter mapping
+
 ## [0.2.6] - 2024-12-19
 
 ### Added

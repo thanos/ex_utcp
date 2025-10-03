@@ -215,4 +215,10 @@ defmodule ExUtcp.Types do
   @type register_result :: {:ok, [tool()]} | {:error, any()}
 
   @type deregister_result :: :ok | {:error, any()}
+
+  @type manual :: %{
+    name: String.t(),
+    description: String.t(),
+    tools: [tool()]
+  }
 end
