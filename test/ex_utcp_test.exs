@@ -223,10 +223,8 @@ defmodule ExUtcpTest do
       config = Config.new()
       {:ok, client} = Client.start_link(config)
 
-      case Client.search_tools(client, "", 10) do
-        {:ok, tools} -> assert is_list(tools)
-        {:error, _reason} -> :ok  # Expected if no providers are loaded
-      end
+      results = Client.search_tools(client, "", %{limit: 10})
+      assert is_list(results)
 
       # Clean up
       GenServer.stop(client)
