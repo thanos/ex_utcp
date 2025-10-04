@@ -67,11 +67,30 @@ defmodule ExUtcp.Client do
   end
 
   @doc """
-  Searches for tools matching the given query.
+  Searches for tools using advanced search algorithms.
+
+  ## Parameters
+
+  - `client`: UTCP client
+  - `query`: Search query string
+  - `opts`: Search options including algorithm, filters, and limits
+
+  ## Options
+
+  - `:algorithm` - Search algorithm (:exact, :fuzzy, :semantic, :combined)
+  - `:filters` - Map with provider, transport, and tag filters
+  - `:limit` - Maximum number of results (default: 20)
+  - `:threshold` - Minimum similarity threshold (default: 0.1)
+  - `:security_scan` - Enable security scanning (default: false)
+  - `:filter_sensitive` - Filter out tools with sensitive data (default: false)
+
+  ## Returns
+
+  List of search results with tools, scores, and match information.
   """
-  @spec search_tools(GenServer.server(), String.t(), integer()) :: T.search_result()
-  def search_tools(client, query \\ "", limit \\ 10) do
-    GenServer.call(client, {:search_tools, query, limit})
+  @spec search_tools(GenServer.server(), String.t(), map()) :: [map()]
+  def search_tools(client, query, opts \\ %{}) do
+    GenServer.call(client, {:search_tools, query, opts})
   end
 
   @doc """
@@ -157,9 +176,12 @@ defmodule ExUtcp.Client do
   end
 
   @impl GenServer
-  def handle_call({:search_tools, query, limit}, _from, state) do
-    tools = Repository.search_tools(state.repository, query, limit)
-    {:reply, {:ok, tools}, state}
+  def handle_call({:search_tools, query, opts}, _from, state) do
+    # Create search engine from current repository state
+    search_engine = create_search_engine_from_state(state)
+
+    results = ExUtcp.Search.search_tools(search_engine, query, opts)
+    {:reply, results, state}
   end
 
   @impl GenServer
@@ -487,6 +509,61 @@ defmodule ExUtcp.Client do
     GenServer.call(client, {:validate_openapi, spec})
   end
 
+
+  @doc """
+  Searches for providers using advanced search algorithms.
+
+  ## Parameters
+
+  - `client`: UTCP client
+  - `query`: Search query string
+  - `opts`: Search options
+
+  ## Returns
+
+  List of search results with providers, scores, and match information.
+  """
+  @spec search_providers(GenServer.server(), String.t(), map()) :: [map()]
+  def search_providers(client, query, opts \\ %{}) do
+    GenServer.call(client, {:search_providers, query, opts})
+  end
+
+  @doc """
+  Gets search suggestions based on partial query.
+
+  ## Parameters
+
+  - `client`: UTCP client
+  - `partial_query`: Partial search query
+  - `opts`: Suggestion options
+
+  ## Returns
+
+  List of suggested search terms.
+  """
+  @spec get_search_suggestions(GenServer.server(), String.t(), keyword()) :: [String.t()]
+  def get_search_suggestions(client, partial_query, opts \\ []) do
+    GenServer.call(client, {:get_search_suggestions, partial_query, opts})
+  end
+
+  @doc """
+  Finds similar tools based on a reference tool.
+
+  ## Parameters
+
+  - `client`: UTCP client
+  - `tool_name`: Name of the reference tool
+  - `opts`: Similarity search options
+
+  ## Returns
+
+  List of similar tools with similarity scores.
+  """
+  @spec find_similar_tools(GenServer.server(), String.t(), keyword()) :: [map()]
+  def find_similar_tools(client, tool_name, opts \\ []) do
+    GenServer.call(client, {:find_similar_tools, tool_name, opts})
+  end
+
   # GenServer callbacks
 
   def handle_call({:convert_openapi, spec, opts}, _from, state) do
@@ -534,7 +611,58 @@ defmodule ExUtcp.Client do
     {:reply, result, state}
   end
 
+  @impl GenServer
+  def handle_call({:search_providers, query, opts}, _from, state) do
+    # Create search engine from current repository state
+    search_engine = create_search_engine_from_state(state)
+
+    results = ExUtcp.Search.search_providers(search_engine, query, opts)
+    {:reply, results, state}
+  end
+
+  @impl GenServer
+  def handle_call({:get_search_suggestions, partial_query, opts}, _from, state) do
+    # Create search engine from current repository state
+    search_engine = create_search_engine_from_state(state)
+
+    suggestions = ExUtcp.Search.get_suggestions(search_engine, partial_query, opts)
+    {:reply, suggestions, state}
+  end
+
+  @impl GenServer
+  def handle_call({:find_similar_tools, tool_name, opts}, _from, state) do
+    case Repository.get_tool(state.repository, tool_name) do
+      {:ok, tool} ->
+        # Create search engine from current repository state
+        search_engine = create_search_engine_from_state(state)
+
+        similar_tools = ExUtcp.Search.suggest_similar_tools(search_engine, tool, opts)
+        {:reply, similar_tools, state}
+      {:error, reason} ->
+        {:reply, {:error, reason}, state}
+    end
+  end
+
   # Private functions
+
+  defp create_search_engine_from_state(state) do
+    # Create a search engine and populate it with current tools and providers
+    search_engine = ExUtcp.Search.Engine.new()
+
+    # Add all tools from repository
+    tools = Repository.get_tools(state.repository)
+    search_engine = Enum.reduce(tools, search_engine, fn tool, acc ->
+      ExUtcp.Search.Engine.add_tool(acc, tool)
+    end)
+
+    # Add all providers from repository
+    providers = Repository.get_providers(state.repository)
+    search_engine = Enum.reduce(providers, search_engine, fn provider, acc ->
+      ExUtcp.Search.Engine.add_provider(acc, provider)
+    end)
+
+    search_engine
+  end
 
   defp convert_openapi_impl(spec, opts) when is_map(spec) do
     OpenApiConverter.convert(spec, opts)

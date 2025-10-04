@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.9] - 2025-10-04
+
+### Added
+- Advanced Search: Comprehensive search system with multiple algorithms
+- FuzzyCompare integration for advanced fuzzy string matching
+- Haystack integration for full-text search capabilities
+- TruffleHog integration for sensitive data detection in search results
+- Search algorithms: exact, fuzzy, semantic, and combined search
+- Search filters by provider, transport type, and tags
+- Search result ranking and scoring system
+- Security scanning for tools and providers with sensitive data detection
+- Search suggestions and similar tool discovery
+- 40+ comprehensive search tests covering all algorithms and features
+- Advanced search examples and documentation
+
+### Changed
+- Enhanced Client module with advanced search functionality
+- Improved search result structure with security warnings and match metadata
+- Updated search options to include security scanning and filtering
+- Enhanced tool and provider discovery with intelligent ranking
+
+### Fixed
+- Search result ranking algorithm for accurate relevance scoring
+- Fuzzy search integration with proper similarity calculations
+- Semantic search keyword extraction and matching
+- Security scanning fallback mechanisms for robust operation
+
 ## [0.2.8] - 2025-10-04
 
 ### Added

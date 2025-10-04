@@ -30,7 +30,8 @@ Key characteristics:
 * Authentication: API Key, Basic, OAuth2
 * Connection pooling and lifecycle management
 * Test configuration with integration test exclusion by default
-* Comprehensive test suite with 394+ tests
+* Advanced Search: Multiple algorithms with fuzzy matching and semantic search
+* Comprehensive test suite with 434+ tests
 
 ## Installation
 
@@ -247,7 +248,7 @@ The library is organized into several main components:
 | Error Recovery | Complete | Complete | Complete | 100% |
 | OpenAPI Converter | Complete | Complete | Complete | 100% |
 | Tool Discovery | Complete | Complete | Complete | 100% |
-| Search | Advanced | Advanced | Basic | 60% |
+| Search | Advanced | Advanced | Complete | 100% |
 | **Testing** | | | | |
 | Unit Tests | Complete | Complete | Complete | 100% |
 | Integration Tests | Complete | Complete | Complete | 100% |
@@ -267,7 +268,7 @@ The library is organized into several main components:
 #### High Priority
 - [x] OpenAPI Converter: Automatic API discovery and tool generation
 - [x] TCP/UDP Transport: Low-level network protocols
-- [ ] Advanced Search: Sophisticated search algorithms
+- [x] Advanced Search: Sophisticated search algorithms
 
 #### Medium Priority
 - [ ] Monitoring: Metrics and health checks
@@ -288,11 +289,11 @@ The library is organized into several main components:
 - Connection pooling and lifecycle management
 - Error recovery with retry logic
 - Test configuration with integration test exclusion by default
-- 394+ tests with comprehensive coverage
+- Advanced Search: Multiple algorithms with fuzzy matching and semantic search
+- 434+ tests with comprehensive coverage
 - Production examples for all transports
 
 #### Missing Features
-- Advanced Search: Sophisticated search algorithms
 - WebRTC Transport: Peer-to-peer communication
 - Monitoring: Metrics and health checks
 - Batch Operations: Multiple tool calls
@@ -305,7 +306,7 @@ The library is organized into several main components:
 #### Phase 2: Enhanced Features (Completed)
 - [x] OpenAPI Converter
 - [x] TCP/UDP Transport
-- [ ] Advanced Search
+- [x] Advanced Search
 - [ ] Monitoring and Metrics
 
 #### Phase 3: Extended Protocols
@@ -342,6 +343,7 @@ See `examples/` directory:
 - `tcp_udp_example.exs` - TCP/UDP provider
 - `streaming_examples.exs` - Streaming examples
 - `openapi_example.exs` - OpenAPI Converter examples
+- `search_example.exs` - Advanced search examples
 
 ## Testing
 
@@ -357,6 +359,53 @@ mix test --only integration
 ```
 
 The test suite is configured to exclude integration tests by default for faster development cycles. Integration tests require external services and are run separately.
+
+## Advanced Search
+
+ExUtcp provides sophisticated search capabilities for discovering tools and providers:
+
+### Search Algorithms
+
+- **Exact Search**: Precise matching for tool and provider names
+- **Fuzzy Search**: Approximate matching using FuzzyCompare library for handling typos and variations
+- **Semantic Search**: Intelligent matching using Haystack full-text search and keyword analysis
+- **Combined Search**: Merges results from all algorithms for comprehensive discovery
+
+### Search Features
+
+- **Multi-field Search**: Search across tool names, descriptions, parameters, and responses
+- **Advanced Filtering**: Filter by provider, transport type, tags, and capabilities
+- **Result Ranking**: Intelligent scoring based on relevance, popularity, quality, and context
+- **Security Scanning**: TruffleHog integration for detecting sensitive data in search results
+- **Search Suggestions**: Auto-complete and suggestion system for improved user experience
+- **Similar Tool Discovery**: Find related tools based on semantic similarity
+
+### Basic Usage
+
+```elixir
+# Start client
+{:ok, client} = ExUtcp.Client.start_link()
+
+# Search with different algorithms
+exact_results = ExUtcp.Client.search_tools(client, "get_user", %{algorithm: :exact})
+fuzzy_results = ExUtcp.Client.search_tools(client, "get_usr", %{algorithm: :fuzzy, threshold: 0.6})
+semantic_results = ExUtcp.Client.search_tools(client, "user management", %{algorithm: :semantic})
+
+# Advanced search with filters and security scanning
+advanced_results = ExUtcp.Client.search_tools(client, "api", %{
+  algorithm: :combined,
+  filters: %{transports: [:http, :websocket], providers: ["my_api"]},
+  security_scan: true,
+  filter_sensitive: true,
+  limit: 10
+})
+
+# Get search suggestions
+suggestions = ExUtcp.Client.get_search_suggestions(client, "us", limit: 5)
+
+# Find similar tools
+similar_tools = ExUtcp.Client.find_similar_tools(client, "get_user", limit: 3)
+```
 
 ## Contributing
 
