@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2025-10-04
+
+### Added
+- Monitoring and Metrics: Comprehensive monitoring system with telemetry integration
+- Telemetry events for all UTCP operations (tool calls, searches, provider registration, connections)
+- PromEx integration for Prometheus metrics collection and visualization
+- Health check system for monitoring transport and component health
+- Performance monitoring with operation timing and statistical analysis
+- Metrics collection system with counters, gauges, histograms, and summaries
+- System monitoring for memory usage, process counts, and scheduler utilization
+- Performance alerts and threshold-based monitoring
+- Custom metrics recording and aggregation
+- Monitoring dashboard configuration with PromEx
+- 15+ comprehensive monitoring tests covering all monitoring features
+- Monitoring examples and documentation
+
+### Changed
+- Enhanced Client module with monitoring and performance measurement integration
+- Added telemetry events to tool calls and search operations for performance tracking
+- Improved error handling with performance metrics for failed operations
+- Updated Client API with monitoring functions (get_monitoring_metrics, get_health_status, get_performance_summary)
+
+### Fixed
+- Performance measurement error handling with proper telemetry emission
+- Health check system robustness with fallback mechanisms
+- Metrics collection reliability with graceful degradation when services unavailable
+
 ## [0.2.9] - 2025-10-04
 
 ### Added

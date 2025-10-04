@@ -4,7 +4,7 @@ defmodule ExUtcp.MixProject do
   def project do
     [
       app: :ex_utcp,
-      version: "0.2.9",
+      version: "0.3.0",
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -51,6 +51,12 @@ defmodule ExUtcp.MixProject do
       {:fuzzy_compare, "~> 1.1"},
       {:truffle_hog, "~> 0.1"},
       {:haystack, "~> 0.1"},
+
+      # Monitoring and metrics
+      {:telemetry, "~> 1.2"},
+      {:prom_ex, "~> 1.9"},
+      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_poller, "~> 1.0"},
 
       # Testing
       {:ex_doc, "~> 0.30", only: :dev, runtime: false},

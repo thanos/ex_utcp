@@ -10,6 +10,7 @@ defmodule ExUtcp.Client do
 
   alias ExUtcp.Types, as: T
   alias ExUtcp.{Config, Repository, Tools, Providers, OpenApiConverter}
+  alias ExUtcp.Monitoring.Performance
 
   defstruct [
     :config,
@@ -161,7 +162,12 @@ defmodule ExUtcp.Client do
 
   @impl GenServer
   def handle_call({:call_tool, tool_name, args}, _from, state) do
-    case call_tool_impl(state, tool_name, args) do
+    # Measure tool call performance
+    result = Performance.measure_tool_call(tool_name, "unknown", args, fn ->
+      call_tool_impl(state, tool_name, args)
+    end)
+
+    case result do
       {:ok, result} -> {:reply, {:ok, result}, state}
       {:error, reason} -> {:reply, {:error, reason}, state}
     end
@@ -177,10 +183,16 @@ defmodule ExUtcp.Client do
 
   @impl GenServer
   def handle_call({:search_tools, query, opts}, _from, state) do
-    # Create search engine from current repository state
-    search_engine = create_search_engine_from_state(state)
+    # Measure search performance
+    algorithm = Map.get(opts, :algorithm, :combined)
+    filters = Map.get(opts, :filters, %{})
 
-    results = ExUtcp.Search.search_tools(search_engine, query, opts)
+    results = Performance.measure_search(query, algorithm, filters, fn ->
+      # Create search engine from current repository state
+      search_engine = create_search_engine_from_state(state)
+      ExUtcp.Search.search_tools(search_engine, query, opts)
+    end)
+
     {:reply, results, state}
   end
 
@@ -564,6 +576,54 @@ defmodule ExUtcp.Client do
     GenServer.call(client, {:find_similar_tools, tool_name, opts})
   end
 
+  @doc """
+  Gets monitoring metrics for the client.
+
+  ## Parameters
+
+  - `client`: UTCP client
+
+  ## Returns
+
+  Map containing current metrics and performance data.
+  """
+  @spec get_monitoring_metrics(GenServer.server()) :: map()
+  def get_monitoring_metrics(client) do
+    GenServer.call(client, :get_monitoring_metrics)
+  end
+
+  @doc """
+  Gets health status for the client and its components.
+
+  ## Parameters
+
+  - `client`: UTCP client
+
+  ## Returns
+
+  Map containing health status information.
+  """
+  @spec get_health_status(GenServer.server()) :: map()
+  def get_health_status(client) do
+    GenServer.call(client, :get_health_status)
+  end
+
+  @doc """
+  Gets performance summary for client operations.
+
+  ## Parameters
+
+  - `client`: UTCP client
+
+  ## Returns
+
+  Map containing performance statistics and alerts.
+  """
+  @spec get_performance_summary(GenServer.server()) :: map()
+  def get_performance_summary(client) do
+    GenServer.call(client, :get_performance_summary)
+  end
+
   # GenServer callbacks
 
   def handle_call({:convert_openapi, spec, opts}, _from, state) do
@@ -641,6 +701,24 @@ defmodule ExUtcp.Client do
       {:error, reason} ->
         {:reply, {:error, reason}, state}
     end
+  end
+
+  @impl GenServer
+  def handle_call(:get_monitoring_metrics, _from, state) do
+    metrics = ExUtcp.Monitoring.get_metrics()
+    {:reply, metrics, state}
+  end
+
+  @impl GenServer
+  def handle_call(:get_health_status, _from, state) do
+    health_status = ExUtcp.Monitoring.get_health_status()
+    {:reply, health_status, state}
+  end
+
+  @impl GenServer
+  def handle_call(:get_performance_summary, _from, state) do
+    performance_summary = Performance.get_performance_summary()
+    {:reply, performance_summary, state}
   end
 
   # Private functions
