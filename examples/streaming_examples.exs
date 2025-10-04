@@ -265,3 +265,4 @@ IO.puts("- Timestamp tracking")
 IO.puts("- Protocol-specific information")
 IO.puts("- Error handling and stream termination")
 IO.puts("- Enhanced type safety with proper stream_result types")
+
