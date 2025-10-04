@@ -63,7 +63,7 @@ defmodule ExUtcp.Transports.McpTest do
       }
 
       # Test with valid provider
-      assert :ok = Mcp.register_tool_provider(valid_provider)
+      assert {:ok, _tools} = Mcp.register_tool_provider(valid_provider)
 
       # Test with invalid provider type
       assert {:error, "Invalid provider type for MCP transport"} =

@@ -493,13 +493,16 @@ defmodule ExUtcp.Client do
     case convert_openapi_impl(spec, opts) do
       {:ok, tools} ->
         # Register all tools
-        results = Enum.map(tools, fn tool ->
-          Repository.add_tool(state.repository, tool)
+        {results, new_repo} = Enum.reduce(tools, {[], state.repository}, fn tool, {acc_results, repo} ->
+          case Repository.add_tool(repo, tool) do
+            {:ok, new_repo} -> {[{:ok, tool} | acc_results], new_repo}
+            {:error, reason} -> {[{:error, reason} | acc_results], repo}
+          end
         end)
 
         # Check if any registration failed
         case Enum.find(results, &match?({:error, _}, &1)) do
-          nil -> {:reply, {:ok, tools}, state}
+          nil -> {:reply, {:ok, tools}, %{state | repository: new_repo}}
           error -> {:reply, error, state}
         end
       error -> {:reply, error, state}
@@ -510,13 +513,16 @@ defmodule ExUtcp.Client do
     case convert_multiple_openapi_impl(specs, opts) do
       {:ok, tools} ->
         # Register all tools
-        results = Enum.map(tools, fn tool ->
-          Repository.add_tool(state.repository, tool)
+        {results, new_repo} = Enum.reduce(tools, {[], state.repository}, fn tool, {acc_results, repo} ->
+          case Repository.add_tool(repo, tool) do
+            {:ok, new_repo} -> {[{:ok, tool} | acc_results], new_repo}
+            {:error, reason} -> {[{:error, reason} | acc_results], repo}
+          end
         end)
 
         # Check if any registration failed
         case Enum.find(results, &match?({:error, _}, &1)) do
-          nil -> {:reply, {:ok, tools}, state}
+          nil -> {:reply, {:ok, tools}, %{state | repository: new_repo}}
           error -> {:reply, error, state}
         end
       error -> {:reply, error, state}

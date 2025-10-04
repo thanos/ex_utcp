@@ -293,7 +293,7 @@ defmodule ExUtcp.OpenApiConverter.AuthMapperTest do
 
   describe "validate_auth/2" do
     test "validates API key auth against matching scheme" do
-      auth = %ExUtcp.Types.api_key_auth{
+      auth = %{
         type: :api_key,
         api_key: "${API_KEY}",
         location: :header,
@@ -317,7 +317,7 @@ defmodule ExUtcp.OpenApiConverter.AuthMapperTest do
     end
 
     test "validates basic auth against matching scheme" do
-      auth = %ExUtcp.Types.basic_auth{
+      auth = %{
         type: :basic,
         username: "${USERNAME}",
         password: "${PASSWORD}"
@@ -340,7 +340,7 @@ defmodule ExUtcp.OpenApiConverter.AuthMapperTest do
     end
 
     test "validates OAuth2 auth against matching scheme" do
-      auth = %ExUtcp.Types.oauth2_auth{
+      auth = %{
         type: :oauth2,
         token_url: "https://auth.example.com/token",
         client_id: "${CLIENT_ID}",
@@ -366,7 +366,7 @@ defmodule ExUtcp.OpenApiConverter.AuthMapperTest do
     end
 
     test "returns error for API key auth without matching scheme" do
-      auth = %ExUtcp.Types.api_key_auth{
+      auth = %{
         type: :api_key,
         api_key: "${API_KEY}",
         location: :header,
@@ -380,7 +380,7 @@ defmodule ExUtcp.OpenApiConverter.AuthMapperTest do
     end
 
     test "returns error for basic auth without matching scheme" do
-      auth = %ExUtcp.Types.basic_auth{
+      auth = %{
         type: :basic,
         username: "${USERNAME}",
         password: "${PASSWORD}"
@@ -393,7 +393,7 @@ defmodule ExUtcp.OpenApiConverter.AuthMapperTest do
     end
 
     test "returns error for OAuth2 auth without matching scheme" do
-      auth = %ExUtcp.Types.oauth2_auth{
+      auth = %{
         type: :oauth2,
         token_url: "https://auth.example.com/token",
         client_id: "${CLIENT_ID}",

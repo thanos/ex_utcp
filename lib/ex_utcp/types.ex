@@ -114,15 +114,21 @@ defmodule ExUtcp.Types do
   @type tcp_provider :: %{
     name: String.t(),
     type: :tcp,
+    protocol: :tcp,
     host: String.t(),
-    port: integer()
+    port: integer(),
+    timeout: integer(),
+    auth: auth() | nil
   }
 
   @type udp_provider :: %{
     name: String.t(),
     type: :udp,
+    protocol: :udp,
     host: String.t(),
-    port: integer()
+    port: integer(),
+    timeout: integer(),
+    auth: auth() | nil
   }
 
   @type webrtc_provider :: %{
