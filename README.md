@@ -31,7 +31,8 @@ Key characteristics:
 * Connection pooling and lifecycle management
 * Test configuration with integration test exclusion by default
 * Advanced Search: Multiple algorithms with fuzzy matching and semantic search
-* Comprehensive test suite with 434+ tests
+* Monitoring and Metrics: Telemetry, PromEx, health checks, and performance monitoring
+* Comprehensive test suite with 467+ tests
 
 ## Installation
 
@@ -258,6 +259,11 @@ The library is organized into several main components:
 | Connection Management | Optimized | Optimized | Optimized | 100% |
 | Memory Usage | Optimized | Optimized | Optimized | 100% |
 | Throughput | High | High | High | 100% |
+| **Monitoring** | | | | |
+| Telemetry | Complete | Complete | Complete | 100% |
+| Metrics | Complete | Complete | Complete | 100% |
+| Health Checks | Complete | Complete | Complete | 100% |
+| Performance Monitoring | Complete | Complete | Complete | 100% |
 | **Documentation** | | | | |
 | API Docs | Complete | Complete | Complete | 100% |
 | Examples | Complete | Complete | Complete | 100% |
@@ -269,9 +275,9 @@ The library is organized into several main components:
 - [x] OpenAPI Converter: Automatic API discovery and tool generation
 - [x] TCP/UDP Transport: Low-level network protocols
 - [x] Advanced Search: Sophisticated search algorithms
+- [x] Monitoring: Metrics and health checks
 
 #### Medium Priority
-- [ ] Monitoring: Metrics and health checks
 - [ ] Batch Operations: Multiple tool calls
 - [ ] WebRTC Transport: Peer-to-peer communication
 
@@ -290,12 +296,12 @@ The library is organized into several main components:
 - Error recovery with retry logic
 - Test configuration with integration test exclusion by default
 - Advanced Search: Multiple algorithms with fuzzy matching and semantic search
-- 434+ tests with comprehensive coverage
+- Monitoring and Metrics: Telemetry, PromEx, health checks, and performance monitoring
+- 467+ tests with comprehensive coverage
 - Production examples for all transports
 
 #### Missing Features
 - WebRTC Transport: Peer-to-peer communication
-- Monitoring: Metrics and health checks
 - Batch Operations: Multiple tool calls
 
 ### Roadmap
@@ -307,7 +313,7 @@ The library is organized into several main components:
 - [x] OpenAPI Converter
 - [x] TCP/UDP Transport
 - [x] Advanced Search
-- [ ] Monitoring and Metrics
+- [x] Monitoring and Metrics
 
 #### Phase 3: Extended Protocols
 - [ ] WebRTC Transport
@@ -344,6 +350,7 @@ See `examples/` directory:
 - `streaming_examples.exs` - Streaming examples
 - `openapi_example.exs` - OpenAPI Converter examples
 - `search_example.exs` - Advanced search examples
+- `monitoring_example.exs` - Monitoring and metrics examples
 
 ## Testing
 
@@ -405,6 +412,63 @@ suggestions = ExUtcp.Client.get_search_suggestions(client, "us", limit: 5)
 
 # Find similar tools
 similar_tools = ExUtcp.Client.find_similar_tools(client, "get_user", limit: 3)
+```
+
+## Monitoring and Metrics
+
+ExUtcp provides comprehensive monitoring capabilities for production deployments:
+
+### Monitoring Features
+
+- **Telemetry Integration**: Automatic telemetry events for all UTCP operations
+- **Prometheus Metrics**: PromEx integration for metrics collection and visualization
+- **Health Checks**: System health monitoring for transports and components
+- **Performance Monitoring**: Operation timing, statistical analysis, and alerting
+- **Custom Metrics**: Support for application-specific metrics and dashboards
+
+### Telemetry Events
+
+ExUtcp emits telemetry events for:
+- Tool calls with duration, success/failure, and metadata
+- Search operations with algorithm, filters, and result counts
+- Provider registration and deregistration
+- Connection establishment and lifecycle events
+- System health and performance metrics
+
+### Basic Usage
+
+```elixir
+# Start monitoring system
+ExUtcp.Monitoring.start()
+
+# Get system metrics
+metrics = ExUtcp.Client.get_monitoring_metrics(client)
+
+# Get health status
+health = ExUtcp.Client.get_health_status(client)
+
+# Get performance summary
+performance = ExUtcp.Client.get_performance_summary(client)
+
+# Record custom metrics
+ExUtcp.Monitoring.Performance.record_custom_metric("api_requests", :counter, 1, %{endpoint: "/users"})
+```
+
+### Prometheus Integration
+
+Configure PromEx in your application:
+
+```elixir
+# config/config.exs
+config :ex_utcp, ExUtcp.Monitoring.PromEx,
+  disabled: false,
+  manual_metrics_start_delay: :no_delay,
+  drop_metrics_groups: [],
+  grafana: [
+    host: "http://localhost:3000",
+    username: "admin",
+    password: "admin"
+  ]
 ```
 
 ## Contributing
