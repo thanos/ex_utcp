@@ -275,3 +275,4 @@ Enum.each(advanced_results, fn result ->
 end)
 
 IO.puts "Search example completed!"
+

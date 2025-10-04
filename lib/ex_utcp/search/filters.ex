@@ -305,3 +305,4 @@ defmodule ExUtcp.Search.Filters do
 
   defp infer_capabilities_from_response(_), do: []
 end
+
