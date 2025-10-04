@@ -22,14 +22,15 @@ Key characteristics:
 
 ## Features
 
-* Transports: HTTP, CLI, WebSocket, gRPC, GraphQL, MCP
+* Transports: HTTP, CLI, WebSocket, gRPC, GraphQL, MCP, TCP/UDP
 * Streaming support across all transports
 * OpenAPI Converter: Automatic API discovery and tool generation
 * Variable substitution via environment variables or `.env` files
 * In-memory repository for providers and tools
 * Authentication: API Key, Basic, OAuth2
 * Connection pooling and lifecycle management
-* Comprehensive test suite with 272+ tests
+* Test configuration with integration test exclusion by default
+* Comprehensive test suite with 394+ tests
 
 ## Installation
 
@@ -234,7 +235,7 @@ The library is organized into several main components:
 | MCP | Complete | Complete | Complete | 100% |
 | SSE | Complete | Complete | Complete | 100% |
 | Streamable HTTP | Complete | Complete | Complete | 100% |
-| TCP/UDP | Complete | Complete | Not Implemented | 0% |
+| TCP/UDP | Complete | Complete | Complete | 100% |
 | WebRTC | Complete | Complete | Not Implemented | 0% |
 | **Authentication** | | | | |
 | API Key | Complete | Complete | Complete | 100% |
@@ -265,8 +266,8 @@ The library is organized into several main components:
 
 #### High Priority
 - [x] OpenAPI Converter: Automatic API discovery and tool generation
+- [x] TCP/UDP Transport: Low-level network protocols
 - [ ] Advanced Search: Sophisticated search algorithms
-- [ ] TCP/UDP Transport: Low-level network protocols
 
 #### Medium Priority
 - [ ] Monitoring: Metrics and health checks
@@ -280,18 +281,18 @@ The library is organized into several main components:
 ### Implementation Status
 
 #### Completed Features
-- 6 transports: HTTP, CLI, WebSocket, gRPC, GraphQL, MCP
+- 7 transports: HTTP, CLI, WebSocket, gRPC, GraphQL, MCP, TCP/UDP
 - Streaming support across all transports
 - OpenAPI Converter: Automatic API discovery and tool generation
 - Authentication: API Key, Basic, OAuth2
 - Connection pooling and lifecycle management
 - Error recovery with retry logic
-- 272+ tests with comprehensive coverage
+- Test configuration with integration test exclusion by default
+- 394+ tests with comprehensive coverage
 - Production examples for all transports
 
 #### Missing Features
 - Advanced Search: Sophisticated search algorithms
-- TCP/UDP Transport: Low-level network protocols
 - WebRTC Transport: Peer-to-peer communication
 - Monitoring: Metrics and health checks
 - Batch Operations: Multiple tool calls
@@ -301,13 +302,13 @@ The library is organized into several main components:
 #### Phase 1: Core Transports (Completed)
 - [x] HTTP/HTTPS, CLI, WebSocket, gRPC, GraphQL, MCP
 
-#### Phase 2: Enhanced Features
+#### Phase 2: Enhanced Features (Completed)
 - [x] OpenAPI Converter
+- [x] TCP/UDP Transport
 - [ ] Advanced Search
 - [ ] Monitoring and Metrics
 
 #### Phase 3: Extended Protocols
-- [ ] TCP/UDP Transport
 - [ ] WebRTC Transport
 
 #### Phase 4: Enterprise Features
@@ -324,9 +325,9 @@ The library is organized into several main components:
 - [gRPC](https://grpc.io/): High-performance RPC calls with [Protocol Buffers](https://developers.google.com/protocol-buffers)
 - [GraphQL](https://graphql.org/): GraphQL API integration with HTTP/HTTPS
 - [MCP](https://modelcontextprotocol.io/): Model Context Protocol integration with [JSON-RPC 2.0](https://www.jsonrpc.org/specification)
+- [TCP/UDP](https://tools.ietf.org/html/rfc793): Low-level network protocols with connection management
 
 ### Planned
-- TCP/UDP: Low-level network protocols
 - WebRTC: Peer-to-peer communication
 
 ## Examples
@@ -338,21 +339,24 @@ See `examples/` directory:
 - `grpc_client.exs` - gRPC provider
 - `graphql_example.exs` - GraphQL provider
 - `mcp_example.exs` - MCP provider
+- `tcp_udp_example.exs` - TCP/UDP provider
 - `streaming_examples.exs` - Streaming examples
 - `openapi_example.exs` - OpenAPI Converter examples
 
 ## Testing
 
 ```bash
-# All tests
+# Unit tests only (default - excludes integration tests)
 mix test
 
-# Unit tests only
-mix test --exclude integration
+# All tests including integration tests
+mix test --include integration
 
 # Integration tests only
 mix test --only integration
 ```
+
+The test suite is configured to exclude integration tests by default for faster development cycles. Integration tests require external services and are run separately.
 
 ## Contributing
 

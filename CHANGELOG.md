@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.8] - 2025-10-04
+
+### Added
+- Test configuration for integration test exclusion by default
+- Proper test tagging system with @tag :integration and @tag :unit
+- TCP/UDP transport implementation with connection management and pooling
+- TCP/UDP transport streaming support with proper metadata
+- TCP/UDP transport retry logic with exponential backoff
+- TCP/UDP transport connection behaviors and testable modules
+- TCP/UDP transport integration tests for real network connections
+- TCP/UDP transport mock tests with Mox integration
+- TCP/UDP transport examples and documentation
+
+### Changed
+- Test helper configuration to exclude integration tests by default (mix test)
+- Integration tests now require explicit inclusion (mix test --include integration)
+- TCP connection tests properly tagged as integration tests
+- Improved test isolation and reliability for unit tests
+- Enhanced test documentation and organization
+
+### Fixed
+- Test suite reliability by separating unit tests from integration tests
+- TCP/UDP mock test isolation issues with unique GenServer processes
+- Test timeout issues in TCP/UDP mock tests
+- Proper categorization of network-dependent tests as integration tests
+- Test configuration to prevent flaky tests in CI/CD environments
+
 ## [0.2.7] - 2025-10-03
 
 ### Added

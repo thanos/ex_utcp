@@ -558,6 +558,8 @@ defmodule ExUtcp.OpenApiConverter.Parser do
     path
     |> String.replace(~r/[{}]/, "")
     |> String.replace(~r/[^a-zA-Z0-9]/, "_")
+    |> String.replace(~r/_{2,}/, "_")  # Replace multiple underscores with single underscore
+    |> String.replace(~r/^_|_$/, "")   # Remove leading/trailing underscores
     |> String.downcase()
     |> then(&"#{String.downcase(method)}_#{&1}")
   end

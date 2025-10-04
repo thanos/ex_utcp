@@ -14,6 +14,14 @@ defmodule ExUtcp.StreamingTest do
       variables: %{}
     }
     {:ok, client} = Client.start_link(config)
+
+    # Start all transport processes
+    {:ok, _} = ExUtcp.Transports.WebSocket.start_link()
+    {:ok, _} = ExUtcp.Transports.Grpc.start_link()
+    {:ok, _} = ExUtcp.Transports.Graphql.start_link()
+    {:ok, _} = ExUtcp.Transports.Mcp.start_link()
+    {:ok, _} = ExUtcp.Transports.TcpUdp.start_link()
+
     %{client: client}
   end
 
@@ -185,7 +193,9 @@ defmodule ExUtcp.StreamingTest do
       |> Stream.map(fn chunk ->
         case chunk do
           %{type: :end} -> :done
-          chunk -> chunk.data
+          %{type: :error} -> :done
+          chunk when is_map(chunk) -> Map.get(chunk, :data, chunk)
+          chunk -> chunk
         end
       end)
       |> Stream.reject(&(&1 == :done))

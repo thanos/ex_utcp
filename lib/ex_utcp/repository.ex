@@ -48,6 +48,26 @@ defmodule ExUtcp.Repository do
   end
 
   @doc """
+  Adds a tool to the repository.
+  """
+  @spec add_tool(T.tool_repository(), T.tool()) :: {:ok, T.tool_repository()} | {:error, String.t()}
+  def add_tool(repo, tool) do
+    provider_name = tool.provider_name
+
+    # Check if provider exists
+    case Map.get(repo.providers, provider_name) do
+      nil ->
+        {:error, "Provider #{provider_name} not found"}
+      _provider ->
+        # Add tool to the provider's tools
+        existing_tools = Map.get(repo.tools, provider_name, [])
+        updated_tools = [tool | existing_tools]
+        new_repo = Map.put(repo, :tools, Map.put(repo.tools, provider_name, updated_tools))
+        {:ok, new_repo}
+    end
+  end
+
+  @doc """
   Gets a tool by name.
   """
   @spec get_tool(T.tool_repository(), String.t()) :: T.tool() | nil

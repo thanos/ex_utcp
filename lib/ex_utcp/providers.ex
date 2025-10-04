@@ -89,31 +89,6 @@ defmodule ExUtcp.Providers do
     }
   end
 
-  @doc """
-  Creates a new TCP provider.
-  """
-  @spec new_tcp_provider(keyword()) :: T.tcp_provider()
-  def new_tcp_provider(opts) do
-    %{
-      name: Keyword.fetch!(opts, :name),
-      type: :tcp,
-      host: Keyword.fetch!(opts, :host),
-      port: Keyword.fetch!(opts, :port)
-    }
-  end
-
-  @doc """
-  Creates a new UDP provider.
-  """
-  @spec new_udp_provider(keyword()) :: T.udp_provider()
-  def new_udp_provider(opts) do
-    %{
-      name: Keyword.fetch!(opts, :name),
-      type: :udp,
-      host: Keyword.fetch!(opts, :host),
-      port: Keyword.fetch!(opts, :port)
-    }
-  end
 
   @doc """
   Creates a new WebRTC provider.
@@ -137,6 +112,38 @@ defmodule ExUtcp.Providers do
       name: Keyword.fetch!(opts, :name),
       type: :mcp,
       url: Keyword.fetch!(opts, :url),
+      auth: Keyword.get(opts, :auth, nil)
+    }
+  end
+
+  @doc """
+  Creates a new TCP provider.
+  """
+  @spec new_tcp_provider(keyword()) :: T.tcp_provider()
+  def new_tcp_provider(opts) do
+    %{
+      name: Keyword.fetch!(opts, :name),
+      type: :tcp,
+      protocol: :tcp,
+      host: Keyword.fetch!(opts, :host),
+      port: Keyword.fetch!(opts, :port),
+      timeout: Keyword.get(opts, :timeout, 5000),
+      auth: Keyword.get(opts, :auth, nil)
+    }
+  end
+
+  @doc """
+  Creates a new UDP provider.
+  """
+  @spec new_udp_provider(keyword()) :: T.udp_provider()
+  def new_udp_provider(opts) do
+    %{
+      name: Keyword.fetch!(opts, :name),
+      type: :udp,
+      protocol: :udp,
+      host: Keyword.fetch!(opts, :host),
+      port: Keyword.fetch!(opts, :port),
+      timeout: Keyword.get(opts, :timeout, 5000),
       auth: Keyword.get(opts, :auth, nil)
     }
   end

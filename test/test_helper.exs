@@ -1,4 +1,6 @@
-ExUnit.start()
+# Exclude integration tests by default
+# To run integration tests: mix test --include integration
+ExUnit.start(exclude: [:integration])
 
 # Configure Mox
 Mox.defmock(ExUtcp.Transports.Graphql.ConnectionMock, for: ExUtcp.Transports.Graphql.ConnectionBehaviour)
