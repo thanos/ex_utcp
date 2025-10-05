@@ -98,8 +98,13 @@ defmodule ExUtcp.Providers do
     %{
       name: Keyword.fetch!(opts, :name),
       type: :webrtc,
-      url: Keyword.fetch!(opts, :url),
-      auth: Keyword.get(opts, :auth, nil)
+      peer_id: Keyword.get(opts, :peer_id),
+      signaling_server: Keyword.get(opts, :signaling_server, "wss://signaling.example.com"),
+      ice_servers: Keyword.get(opts, :ice_servers, [
+        %{urls: ["stun:stun.l.google.com:19302"]}
+      ]),
+      timeout: Keyword.get(opts, :timeout, 30_000),
+      tools: Keyword.get(opts, :tools, [])
     }
   end
 

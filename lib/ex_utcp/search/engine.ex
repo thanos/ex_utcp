@@ -1,7 +1,7 @@
 defmodule ExUtcp.Search.Engine do
   @moduledoc """
   Search engine for managing and indexing UTCP tools and providers.
-  
+
   The engine maintains an in-memory index of tools and providers for fast searching.
   """
 
@@ -260,4 +260,3 @@ defmodule ExUtcp.Search.Engine do
     {:reply, statistics, engine}
   end
 end
-

@@ -24,7 +24,7 @@ Key characteristics:
 
 ## Features
 
-* Transports: HTTP, CLI, WebSocket, gRPC, GraphQL, MCP, TCP/UDP
+* Transports: HTTP, CLI, WebSocket, gRPC, GraphQL, MCP, TCP/UDP, WebRTC
 * Streaming support across all transports
 * OpenAPI Converter: Automatic API discovery and tool generation
 * Variable substitution via environment variables or `.env` files
@@ -34,7 +34,7 @@ Key characteristics:
 * Test configuration with integration test exclusion by default
 * Advanced Search: Multiple algorithms with fuzzy matching and semantic search
 * Monitoring and Metrics: Telemetry, PromEx, health checks, and performance monitoring
-* Comprehensive test suite with 467+ tests
+* Comprehensive test suite with 497+ tests
 
 ## Installation
 
@@ -240,7 +240,7 @@ The library is organized into several main components:
 | SSE | Complete | Complete | Complete | 100% |
 | Streamable HTTP | Complete | Complete | Complete | 100% |
 | TCP/UDP | Complete | Complete | Complete | 100% |
-| WebRTC | Complete | Complete | Not Implemented | 0% |
+| WebRTC | Complete | Complete | Complete | 100% |
 | **Authentication** | | | | |
 | API Key | Complete | Complete | Complete | 100% |
 | Basic Auth | Complete | Complete | Complete | 100% |
@@ -278,10 +278,10 @@ The library is organized into several main components:
 - [x] TCP/UDP Transport: Low-level network protocols
 - [x] Advanced Search: Sophisticated search algorithms
 - [x] Monitoring: Metrics and health checks
+- [x] WebRTC Transport: Peer-to-peer communication
 
 #### Medium Priority
 - [ ] Batch Operations: Multiple tool calls
-- [ ] WebRTC Transport: Peer-to-peer communication
 
 #### Low Priority
 - [ ] Custom Variable Loaders: Beyond .env files
@@ -290,7 +290,7 @@ The library is organized into several main components:
 ### Implementation Status
 
 #### Completed Features
-- 7 transports: HTTP, CLI, WebSocket, gRPC, GraphQL, MCP, TCP/UDP
+- 8 transports: HTTP, CLI, WebSocket, gRPC, GraphQL, MCP, TCP/UDP, WebRTC
 - Streaming support across all transports
 - OpenAPI Converter: Automatic API discovery and tool generation
 - Authentication: API Key, Basic, OAuth2
@@ -299,11 +299,10 @@ The library is organized into several main components:
 - Test configuration with integration test exclusion by default
 - Advanced Search: Multiple algorithms with fuzzy matching and semantic search
 - Monitoring and Metrics: Telemetry, PromEx, health checks, and performance monitoring
-- 467+ tests with comprehensive coverage
+- 497+ tests with comprehensive coverage
 - Production examples for all transports
 
 #### Missing Features
-- WebRTC Transport: Peer-to-peer communication
 - Batch Operations: Multiple tool calls
 
 ### Roadmap
@@ -317,8 +316,8 @@ The library is organized into several main components:
 - [x] Advanced Search
 - [x] Monitoring and Metrics
 
-#### Phase 3: Extended Protocols
-- [ ] WebRTC Transport
+#### Phase 3: Extended Protocols (Completed)
+- [x] WebRTC Transport
 
 #### Phase 4: Enterprise Features
 - [ ] Batch Operations
@@ -335,9 +334,10 @@ The library is organized into several main components:
 - [GraphQL](https://graphql.org/): GraphQL API integration with HTTP/HTTPS
 - [MCP](https://modelcontextprotocol.io/): Model Context Protocol integration with [JSON-RPC 2.0](https://www.jsonrpc.org/specification)
 - [TCP/UDP](https://tools.ietf.org/html/rfc793): Low-level network protocols with connection management
+- [WebRTC](https://www.w3.org/TR/webrtc/): Peer-to-peer communication with data channels and NAT traversal
 
 ### Planned
-- WebRTC: Peer-to-peer communication
+- Additional enterprise features and optimizations
 
 ## Examples
 
@@ -353,6 +353,7 @@ See `examples/` directory:
 - `openapi_example.exs` - OpenAPI Converter examples
 - `search_example.exs` - Advanced search examples
 - `monitoring_example.exs` - Monitoring and metrics examples
+- `webrtc_example.exs` - WebRTC peer-to-peer examples
 
 ## Testing
 

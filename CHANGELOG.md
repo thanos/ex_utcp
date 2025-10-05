@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1] - 2025-10-05
+
+### Added
+- WebRTC Transport: Peer-to-peer communication with WebRTC data channels
+- ExWebRTC library integration for W3C WebRTC API implementation
+- WebRTC connection management with signaling protocol
+- ICE candidate handling with STUN/TURN server support
+- WebRTC data channels for tool communication
+- Peer-to-peer tool calling without server intermediary
+- WebRTC signaling server client for SDP and ICE exchange
+- NAT traversal with configurable ICE servers
+- DTLS encryption for secure peer-to-peer communication
+- WebRTC streaming support with data channel multiplexing
+- 18 comprehensive WebRTC tests covering all transport features
+- WebRTC examples and documentation with setup guide
+- Sobelow security analysis tool integration
+
+### Changed
+- Updated Client module to include WebRTC transport in default transports
+- Enhanced Providers module with WebRTC provider configuration
+- Updated transport count from 7 to 8 transports
+- Improved README with updated transport coverage
+
+### Fixed
+- WebRTC provider configuration with proper ICE server defaults
+- Connection lifecycle management for WebRTC peers
+- Data channel message handling and serialization
+
 ## [0.3.0] - 2025-10-04
 
 ### Added
