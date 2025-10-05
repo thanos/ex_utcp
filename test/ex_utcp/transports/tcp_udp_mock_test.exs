@@ -74,11 +74,11 @@ defmodule ExUtcp.Transports.TcpUdpMockTest do
 
       # Mock the connection to return a successful response
       conn_pid = self()
-      
+
       # Allow the GenServer process to use the mock
       genserver_pid = GenServer.whereis(transport_name)
       Mox.allow(ExUtcp.Transports.TcpUdp.ConnectionMock, self(), genserver_pid)
-      
+
       expect(ExUtcp.Transports.TcpUdp.ConnectionMock, :start_link, 1, fn _provider ->
         {:ok, conn_pid}
       end)

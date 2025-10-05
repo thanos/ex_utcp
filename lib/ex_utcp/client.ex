@@ -224,7 +224,8 @@ defmodule ExUtcp.Client do
       "websocket" => ExUtcp.Transports.WebSocket,
       "grpc" => ExUtcp.Transports.Grpc,
       "graphql" => ExUtcp.Transports.Graphql,
-      "mcp" => ExUtcp.Transports.Mcp
+      "mcp" => ExUtcp.Transports.Mcp,
+      "webrtc" => ExUtcp.Transports.WebRTC
       # Add more transports as they are implemented
     }
   end

@@ -4,7 +4,7 @@ defmodule ExUtcp.MixProject do
   def project do
     [
       app: :ex_utcp,
-      version: "0.3.0",
+      version: "0.3.1",
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -57,6 +57,9 @@ defmodule ExUtcp.MixProject do
       {:prom_ex, "~> 1.9"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
+
+      # WebRTC support
+      {:ex_webrtc, "~> 0.15"},
 
       # Testing
       {:ex_doc, "~> 0.30", only: :dev, runtime: false},
